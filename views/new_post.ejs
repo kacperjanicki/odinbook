@@ -1,0 +1,14 @@
+<form action="<%= post?(`/posts/${String(post._id)}/edit`):('/posts/new') %>" method="POST">
+    <div>
+        <label for="body">Post body:</label>
+        <textarea name="body" cols="30" rows="10"><%= post.body %></textarea>
+    </div>
+    <label for="public">Public</label>
+    <% if(post.public){ %>
+    <input type="checkbox" name="public" checked />
+    <% }else{ %>
+    <input type="checkbox" name="public" />
+    <% } %>
+
+    <button type="submit">Send</button>
+</form>

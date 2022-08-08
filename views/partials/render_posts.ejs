@@ -5,7 +5,8 @@
         <a href="/posts/<%=String(post._id) %>">
             <%= post.createdAt.toISOString().split('T')[0] %> <%=
             post.createdAt.toLocaleString().split(',')[1].slice(0,6) %> </a
-        >; Posted by: <%= post.author %> <% if(isUser && post.author == currentUser){ %>
+        >; Posted by: <a href="/profile/<%= post.author %>"><%= post.author %></a> <% if(isUser && post.author
+        == currentUser){ %>
         <form method="POST" action="/posts/<%=String(post._id) %>?_method=DELETE">
             <button type="submit">Delete post</button>
         </form>

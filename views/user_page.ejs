@@ -1,0 +1,5 @@
+<% if(isPersonal){ %>
+<a href="/profile/<%= user.username%>/edit">Edit profile</a>
+<% }else{ %>
+<a href="/profile/<%= user.username%>/add">Add to friends</a>
+<% } %> <%= user.username %>

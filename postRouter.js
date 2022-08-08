@@ -13,7 +13,6 @@ db.once("open", () => console.log("connected to mongoose"));
 
 router.get("/", isUser, async (req, res) => {
     var posts = await Post.find({});
-    console.log(String(posts[0]._id));
     res.render("all_posts", {
         isUser: req.user ? true : false,
         posts: posts,
@@ -23,13 +22,16 @@ router.get("/", isUser, async (req, res) => {
 
 router.get("/new", isUser, (req, res) => {
     if (req.user) {
-        res.render("new_post", { isUser: req.user ? true : false, post: false });
+        res.render("new_post", {
+            isUser: req.user ? true : false,
+            post: false,
+            currentUser: req.user ? req.user : null,
+        });
     } else {
         return res.json(400, { msg: "Access denied" });
     }
 });
 router.post("/new", isUser, (req, res) => {
-    console.log(req.user);
     if (req.user) {
         var post = new Post({
             body: req.body.body,
@@ -94,7 +96,6 @@ router.get("/:id/edit", isUser, async (req, res) => {
 router.post("/:id/edit", isUser, async (req, res) => {
     var post = await Post.findById(req.params.id);
     if (post.author == req.user.username) {
-        console.log(req.body);
         await Post.findByIdAndUpdate(String(post._id), {
             public: req.body.public == "on",
             body: req.body.body,

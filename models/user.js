@@ -8,5 +8,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    friends: {
+        type: Array,
+        required: false,
+        default: [],
+    },
+    dateOfBirth: {
+        type: Date,
+        required: true,
+    },
 });
 module.exports = mongoose.model("User", userSchema);

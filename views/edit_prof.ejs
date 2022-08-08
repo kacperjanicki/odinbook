@@ -1,0 +1,12 @@
+<form action="/profile/<%= user.username %>/edit" method="POST">
+    <% if(error){ %> <%= error %> <% } %> <% if(msg){ %> <%= msg %> <% } %>
+    <div>
+        <label for="username">Username: </label>
+        <input type="text" name="username" value="<%= user.username %>" disabled />
+    </div>
+    <div>
+        <label for="date">Date of birth: </label>
+        <input type="date" name="date" required value="<%= user.dateOfBirth.toISOString().split("T")[0] %>" />
+    </div>
+    <button type="Submit">Edit</button>
+</form>

@@ -1,5 +1,5 @@
 <form action="/login" method="POST">
-    <% if(error){ %> <%= error %> <% } %>
+    <% if(error){ %> <%= error %> <% } %> <% if(msg){ %> <%= msg %> <% } %>
     <div>
         <label for="username">Username: </label>
         <% if(username){ %>

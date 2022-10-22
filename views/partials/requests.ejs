@@ -1,0 +1,13 @@
+<div>requests</div>
+<% user.friend_requests.forEach((req)=>{ %>
+<div style="display: flex">
+    <%= req %>
+    <form action="<%= user.username %>/acceptreq?person=<%= req %>&type=accept" method="POST">
+        <button type="submit">Accept</button>
+    </form>
+    <form action="<%= user.username %>/acceptreq?person=<%= req %>&type=decline" method="POST">
+        <button type="submit">Decline</button>
+    </form>
+</div>
+
+<% }) %>

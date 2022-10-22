@@ -1,24 +1,89 @@
-<% posts.map(post=>{ %> <% if(post.public || isUser){ %>
-<div>
-    <div><%= post.body %></div>
-    <div>
-        <a href="/posts/<%=String(post._id) %>">
-            <%= post.createdAt.toISOString().split('T')[0] %> <%=
-            post.createdAt.toLocaleString().split(',')[1].slice(0,6) %> </a
-        >; Posted by: <a href="/profile/<%= post.author %>"><%= post.author %></a> <% if(isUser && post.author
-        == currentUser){ %>
-        <form method="POST" action="/posts/<%=String(post._id) %>?_method=DELETE">
-            <button type="submit">Delete post</button>
-        </form>
-        <% if(!post.public){ %>
-        <form method="POST" action="/posts/<%=String(post._id) %>?public=true">
-            <button type="submit">Publish</button>
-        </form>
-        <% }else{ %>
-        <form method="POST" action="/posts/<%=String(post._id) %>?public=false">
-            <button type="submit">Hide post</button>
-        </form>
-        <% } %><a href="/posts/<%=String(post._id) %>/edit">Edit</a> <% } %>
+<div class="posts-container">
+    <% posts.map(post=>{ %> <% if(post.public && post.author){ %>
+    <div class="post">
+        <div class="post-main">
+            <div class="post-user">
+                <div class="img-container">
+                    <a href="/profile/<%= post.author.username %>">
+                        <img
+                            src="data:<%=post.author.contentType%>;base64,<%=post.author.imageBase64%>"
+                            alt=""
+                            style="height: 1.5rem"
+                        />
+                    </a>
+                </div>
+
+                <div class="post-user-info">
+                    <a href="/profile/<%= post.author.username %>"><%= post.author.username %></a>
+                    <a href="/posts/<%=String(post._id) %>" class="date">
+                        <%= post.createdAt.toISOString().split('T')[0] %> <%=
+                        post.createdAt.toLocaleString().split(',')[1].slice(0,6) %>
+                    </a>
+                </div>
+            </div>
+
+            <div class="post-body"><%= post.body %></div>
+        </div>
+
+        <div>
+            <div class="post-bottom">
+                <div>
+                    <% if(!post.likes.includes(currentUser)){ %>
+                    <form action="/posts/<%=String(post._id) %>/like" method="POST">
+                        <button>Like</button>
+                    </form>
+                    <% }else{ %>
+                    <form action="/posts/<%=String(post._id) %>/dislike" method="POST">
+                        <button>Dislike</button>
+                    </form>
+                    <% } %>
+                </div>
+                <% if(currentUser && post.author == currentUser){ %>
+                <form method="POST" action="/posts/<%=String(post._id) %>?_method=DELETE">
+                    <button type="submit">Delete post</button>
+                </form>
+                <% if(!post.public){ %>
+                <form method="POST" action="/posts/<%=String(post._id) %>?public=true">
+                    <button type="submit">Publish</button>
+                </form>
+                <% }else{ %>
+                <form method="POST" action="/posts/<%=String(post._id) %>?public=false">
+                    <button type="submit">Hide post</button>
+                </form>
+                <% } %><a href="/posts/<%=String(post._id) %>/edit">Edit</a> <% } %>
+                <button id="<%= post._id %>" class="comment-display">Comment</button>
+            </div>
+
+            <form
+                action="/posts/<%=String(post._id) %>/comment"
+                method="POST"
+                class="comment"
+                id="<%= String(post._id) %>"
+            >
+                <button id="<%= post._id %>" type="button">X hide</button>
+                <div class="comment-send">
+                    <!-- <img
+                        src="data:<user.contentType%>;base64,<user.imageBase64%>"
+                        alt=""
+                        style="height: 2rem"
+                    /> -->
+                    <textarea
+                        name="body"
+                        cols="30"
+                        rows="1"
+                        minlength="1"
+                        placeholder="Write a comment..."
+                    ></textarea>
+                    <button>Send</button>
+                </div>
+            </form>
+
+            <div id="<%= post._id %>" class="comment">
+                Comments <% post.comments.map(comment=>{ %>
+                <div><%= comment.body %></div>
+                <% }) %>
+            </div>
+        </div>
     </div>
+    <% } %> <% }) %>
 </div>
-<% } %> <% }) %>

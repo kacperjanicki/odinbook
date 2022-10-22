@@ -1,4 +1,4 @@
-<form action="/profile/<%= user.username %>/edit" method="POST">
+<form action="/profile/<%= user.username %>/edit" enctype="multipart/form-data" method="POST">
     <% if(error){ %> <%= error %> <% } %> <% if(msg){ %> <%= msg %> <% } %>
     <div>
         <label for="username">Username: </label>
@@ -8,5 +8,14 @@
         <label for="date">Date of birth: </label>
         <input type="date" name="date" required value="<%= user.dateOfBirth.toISOString().split("T")[0] %>" />
     </div>
-    <button type="Submit">Edit</button>
+    <div>
+        <label for="profpic">Profile picture:</label>
+        <input type="file" name="profilePic" />
+        <div>
+            <% if(user.imageBase64){ %>
+            <img src="data:<%=user.contentType%>;base64,<%=user.imageBase64%>" alt="" style="height: 3rem" />
+            <% }else{ %> Add profile picture <% } %>
+        </div>
+    </div>
+    <button type="submit">Submit</button>
 </form>

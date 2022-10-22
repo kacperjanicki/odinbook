@@ -1,5 +1,11 @@
-<% if(isPersonal){ %>
-<a href="/profile/<%= user.username%>/edit">Edit profile</a>
-<% }else{ %>
-<a href="/profile/<%= user.username%>/add">Add to friends</a>
-<% } %> <%= user.username %>
+<%= user.username %> <%= user.dateOfBirth %>
+<div>
+    <% if(user.imageBase64){ %>
+    <img src="data:<%=user.contentType%>;base64,<%=user.imageBase64%>" alt="" style="height: 3rem" />
+    <% }else{ %>
+    <img src="../public/Facebook-default-no-profile-pic.jpg" alt="test" />
+    <% } %>
+</div>
+
+<%- include('./partials/add_friend.ejs') %> <% if(isPersonal){ %> <%- include('./partials/requests.ejs') %> <%
+} %>

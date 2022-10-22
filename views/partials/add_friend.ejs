@@ -1,0 +1,19 @@
+<% if(msg){ %>
+<div><%= msg %></div>
+<% } %> <% if(isPersonal){ %>
+<a href="/profile/<%= user.username%>/edit">Edit profile</a>
+<% }else if(!isPersonal && !currentUser){ %>
+<a href="/profile/<%= user.username %>?msg=Login required" style="color: grey">Add to friends</a>
+<% }else if(!isPersonal && !isFriend && !sentRequest){ %>
+<form action="/profile/<%= user.username%>/add" method="POST">
+    <button>Add to friends</button>
+</form>
+<% }else if(!isPersonal && isFriend){ %>
+<form action="/profile/<%= user.username%>/removeFriend" method="POST">
+    <button>Remove from friends</button>
+</form>
+<% }else if(!isPersonal && sentRequest){ %>
+<form action="/profile/<%= user.username%>/unsendReq" method="POST">
+    <button>Unsend friend request</button>
+</form>
+<% } %>

@@ -7,42 +7,48 @@ const fs = require("fs");
 const personalContent = require("./middleware/personalContent");
 
 router.get("/:username", isUser, async (req, res) => {
-    const user = await User.findOne({ username: req.params.username });
+    const URLuser = await User.findOne({ username: req.params.username })
+        .populate("friend_requests")
+        .populate("friends");
+    if (URLuser) {
+        // URLuser.friend_requests.forEach((request) => {
+        //     console.log(request.username == req.currentUser.username);
+        //     request.thisUser = true
+        // });
 
-    if (user) {
+        let isFriend = URLuser.friends.filter((friend) => friend._id.equals(req.currentUser._id)).length > 0;
         res.render("user_page", {
-            user: user,
+            currentUser: req.currentUser,
+            user: URLuser,
             msg: req.query.msg,
-            isFriend: req.user ? user.friends.includes(req.user.username) : false,
-            currentUser: req.user ? req.user.username : null,
-            isPersonal: req.user ? user.username == req.user.username : false,
-            sentRequest: req.user ? user.friend_requests.includes(req.user.username) : false,
+            like: false,
+            isFriend: req.currentUser ? isFriend : false,
+            isPersonal: req.currentUser ? URLuser.username == req.currentUser.username : false,
+            sentRequest: req.currentUser ? req.currentUser.sent_requests.includes(URLuser._id) : false,
         });
     } else {
-        res.render("errors/404", { currentUser: req.user ? req.user.username : null });
+        res.render("errors/404", { currentUser: req.currentUser });
     }
 });
-router.get("/:username/friends", isUser, (req, res) => {
+router.get("/:username/friends", isUser, async (req, res) => {
     res.render("friends_list", {
-        currentUser: req.user ? req.user : null,
+        currentUser: req.currentUser ? await User.findOne({ username: req.currentUser.username }) : null,
         requestedUser: req.params.username,
     });
 });
 router.get("/:username/edit", isUser, personalContent, async (req, res) => {
-    const user = await User.findOne({ username: req.params.username });
     res.render("edit_prof", {
         error: null,
         msg: null,
-        user: user,
-        currentUser: req.user ? req.user.username : null,
+        currentUser: req.currentUser,
     });
 });
 var store = require("./multer");
-router.post("/:username/edit", isUser, personalContent, store.single("profilePic"), async (req, res) => {
+router.post("/:username/edit", store.single("profilePic"), isUser, personalContent, async (req, res) => {
     try {
         if (req.file) {
             await User.updateOne(
-                { username: req.user.username },
+                { username: req.currentUser.username },
                 {
                     username: req.params.username,
                     dateOfBirth: req.body.date,
@@ -52,78 +58,117 @@ router.post("/:username/edit", isUser, personalContent, store.single("profilePic
                 },
                 { upsert: true }
             );
+            res.redirect("/profile/" + req.currentUser.username + "?msg=Profile updated successfully");
         } else {
             await User.updateOne(
-                { username: req.user.username },
+                { username: req.currentUser.username },
                 {
                     username: req.params.username,
                     dateOfBirth: req.body.date,
                 },
                 { upsert: true }
             );
+            res.redirect("/profile/" + req.currentUser.username + "?msg=Profile updated successfully");
         }
-        res.redirect("/profile/" + req.params.username + "?msg=Profile updated successfully");
     } catch (err) {
         console.log(err);
         res.redirect("/profile/" + req.params.username + "?msg=Error while updating profile");
     }
 });
-router.post("/:username/add", isUser, async (req, res) => {
+router.post("/:username/add", isUser, requireLogin, async (req, res) => {
     let user = await User.findOne({ username: req.params.username });
-    let this_user = await User.findOne({ username: req.user.username });
-    if (!user.friends.includes(req.user.username) && !this_user.sent_requests.includes(user.username)) {
-        user.friend_requests.push(req.user.username);
-        this_user.sent_requests.push(user.username);
-        await user.update({ friend_requests: user.friend_requests });
-        await this_user.update({ sent_requests: this_user.sent_requests });
-        res.redirect("/profile/" + req.params.username + "?msg=Friend request sent");
+    let this_user = await User.findOne({ username: req.currentUser.username });
+    if (user.username == this_user.username) {
+        //prevent sending request to yourself
+        res.redirect(req.header("Referer") + "?msg=Can't send request to yourself");
     } else {
-        res.redirect("/");
+        if (!user.friends.includes(this_user._id) && !this_user.sent_requests.includes(user._id)) {
+            user.friend_requests.push(this_user._id);
+            this_user.sent_requests.push(user._id);
+            await user.update({ friend_requests: user.friend_requests }).populate("friend_requests");
+            await this_user.update({ sent_requests: this_user.sent_requests }).populate("sent_requests");
+            res.redirect("/profile/" + req.params.username + "?msg=Friend request sent");
+        } else {
+            res.redirect("/");
+        }
     }
 });
 
 router.post("/:username/removeFriend", isUser, async (req, res) => {
-    try {
-        let this_user = await User.findOne({ username: req.params.username });
-        let user = await User.findOne({ username: req.user.username });
-        const selfFriends = this_user.friends.filter((user) => user != req.user.username);
-        const updatedFriends = user.friends.filter((user) => user != this_user.username);
-        console.log(this_user, user);
+    let friendDel = await User.findOne({
+        username: req.params.username,
+    }).populate("friends");
+    let currentUser = await User.findOne({ username: req.currentUser.username }).populate("friends");
 
-        await this_user.update({ friends: selfFriends });
-        await user.update({ friends: updatedFriends });
-        res.redirect("/profile/" + req.params.username + "?msg=Friend removed successfully");
-    } catch {
-        res.redirect("/profile/" + req.params.username + "?msg=Error while removing friend");
+    try {
+        let myFilteredFriends = currentUser.friends.filter(
+            (friend) => friend._id.toHexString() != friendDel._id.toHexString()
+        );
+
+        let userFilteredFriends = friendDel.friends.filter(
+            (friend) => friend._id.toHexString() != currentUser._id.toHexString()
+        );
+        await User.updateOne({ username: currentUser.username }, { friends: myFilteredFriends }); //change current user friends list
+        await User.updateOne({ username: friendDel.username }, { friends: userFilteredFriends }); //change friend friend's list
+        res.redirect("/profile/" + friendDel.username + "?msg=Friend removed successfully");
+    } catch (err) {
+        res.redirect("/");
+        console.log(err);
     }
+    // let this_user = await User.findOne({ username: req.params.username });
+    // let user = await User.findOne({ username: req.currentUser.username });
+    // const selfFriends = this_user.friends.filter((user) => user != req.currentUser.username);
+    // const updatedFriends = user.friends.filter((user) => user != this_user.username);
+    // await this_user.update({ friends: selfFriends });
+    // await user.update({ friends: updatedFriends });
 });
 
 router.post("/:username/unsendReq", isUser, async (req, res) => {
+    console.log("test");
     let user = await User.findOne({ username: req.params.username });
-    let this_user = await User.findOne({ username: req.user.username });
-    const updatedReqs = user.friend_requests.filter((request) => request != req.user.username);
-    const sentReq = this_user.sent_requests.filter((request) => request != user.username);
-    await user.update({ friend_requests: updatedReqs });
-    await this_user.update({ sent_requests: sentReq });
-    res.redirect("/profile/" + req.params.username + "?msg=Friend request unsent");
+    let this_user = await User.findOne({ username: req.currentUser.username });
+    const updatedReqs = user.friend_requests.filter(
+        (request) => request.toHexString() != this_user._id.toHexString()
+    );
+    const sentReq = this_user.sent_requests.filter(
+        (request) => request.toHexString() != user._id.toHexString()
+    );
+    await User.updateOne({ username: user.username }, { friend_requests: updatedReqs }, { upsert: true });
+    await User.updateOne({ username: this_user.username }, { sent_requests: sentReq }, { upsert: true });
+    res.redirect("/profile/" + user.username + "?msg=Friend request unsent");
 });
 
-router.post("/:username/acceptreq", isUser, async (req, res) => {
+router.post("/:username/acceptreq", isUser, personalContent, async (req, res) => {
+    console.log(req.query.person);
     try {
-        let this_user = await User.findOne({ username: req.params.username });
+        let this_user = req.currentUser;
         let sender = await User.findOne({ username: req.query.person });
-        let newReq = this_user.friend_requests.filter((request) => request != req.query.person);
+        let newReq = this_user.friend_requests.filter(
+            (request) => request._id.toHexString() != sender._id.toHexString()
+        );
+        let newSenderReq = sender.sent_requests.filter(
+            (request) => request._id.toHexString() != this_user._id.toHexString()
+        );
+
         if (req.query.type == "accept") {
-            this_user.friends.push(sender.username);
-            sender.friends.push(this_user.username);
+            this_user.friends.push(sender._id);
+            sender.friends.push(this_user._id);
         }
-        let newSenderReq = sender.sent_requests.filter((request) => request != this_user.username);
+
         await this_user.update({ friend_requests: newReq, friends: this_user.friends });
         await sender.update({ sent_requests: newSenderReq, friends: sender.friends });
         res.redirect("/profile/" + req.params.username);
     } catch {
         res.redirect("/profile/" + req.params.username + "?msg=Error with accepting request");
     }
+});
+router.get("/:username/delete", isUser, personalContent, async (req, res) => {
+    res.render("delete", {
+        currentUser: req.currentUser ? await User.findOne({ username: req.currentUser.username }) : null,
+    });
+});
+router.post("/:username/delete", isUser, personalContent, async (req, res) => {
+    let user = await User.find({ username: req.currentUser.username });
 });
 
 module.exports = router;

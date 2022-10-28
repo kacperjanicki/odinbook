@@ -1,4 +1,4 @@
-<%= user.username %> <%= user.dateOfBirth %>
+<div><%= user.username %></div>
 <div>
     <% if(user.imageBase64){ %>
     <img src="data:<%=user.contentType%>;base64,<%=user.imageBase64%>" alt="" style="height: 3rem" />
@@ -6,6 +6,7 @@
     <img src="../public/Facebook-default-no-profile-pic.jpg" alt="test" />
     <% } %>
 </div>
+<div>Born <%= user.dateOfBirth.toLocaleString().split(',')[0] %></div>
 
 <%- include('./partials/add_friend.ejs') %> <% if(isPersonal){ %> <%- include('./partials/requests.ejs') %> <%
 } %>

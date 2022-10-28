@@ -1,11 +1,23 @@
+<a href="/profile/<%= user.username%>/edit">Edit profile</a>
+<div>
+    Friends <% user.friends.map(friend=>{ %>
+    <div>
+        <%= friend.username %>
+        <form action="/profile/<%= user.username%>/removeFriend?friend=<%= friend.username %>" method="POST">
+            <button>Remove from friends</button>
+        </form>
+    </div>
+    <% }) %>
+</div>
+<br />
 <div>requests</div>
 <% user.friend_requests.forEach((req)=>{ %>
 <div style="display: flex">
-    <%= req %>
-    <form action="<%= user.username %>/acceptreq?person=<%= req %>&type=accept" method="POST">
+    <%= req.username %>
+    <form action="<%= user.username %>/acceptreq?person=<%= req.username %>&type=accept" method="POST">
         <button type="submit">Accept</button>
     </form>
-    <form action="<%= user.username %>/acceptreq?person=<%= req %>&type=decline" method="POST">
+    <form action="<%= user.username %>/acceptreq?person=<%= req.username %>&type=decline" method="POST">
         <button type="submit">Decline</button>
     </form>
 </div>

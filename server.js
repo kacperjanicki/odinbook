@@ -24,24 +24,34 @@ const userRouter = require("./userRouter.js");
 app.use(expressLayouts);
 app.use(express.static(__dirname + "/public"));
 
+const mongoose = require("mongoose");
+mongoose.connect(process.env.DATABASE_URL, () => {
+    console.log("Connected to MongoDB");
+});
+const db = mongoose.connection;
+
+db.on("error", (error) => console.error(error));
+
 app.use("/posts", postRouter);
 app.use("/profile", userRouter);
 
+const isPostLiked = require("./public/postLiked");
+const isLikeFriend = require("./public/isLikeFriend");
 app.get("/", checkuser, async (req, res) => {
-    var posts = await Post.find({}).populate("author");
-    res.render("index", {
-        isUser: req.user ? true : false,
+    var posts = await Post.find({}).populate("author").populate("comments");
+    isPostLiked(posts, req.currentUser);
+    isLikeFriend(posts, req.currentUser); //add to friends button function
+    res.render("all_posts", {
         posts: posts,
-        user: req.user ? await User.findOne({ username: req.params.username }) : null,
-        msg: req.query.pass ? "logged in" : null,
-        currentUser: req.user ? req.user.username : null,
+        currentUser: req.currentUser,
+        msg: req.query.pass ? "Logged in" : req.query.msg,
     });
 });
-app.get("/signup", checkuser, (req, res) => {
+app.get("/signup", checkuser, async (req, res) => {
     res.render("signup", {
         error: false,
         msg: req.query.msg ? req.query.msg : null,
-        currentUser: req.user ? req.user.username : null,
+        currentUser: req.user ? await User.findOne({ username: req.user.username }) : null,
     });
 });
 
@@ -53,19 +63,15 @@ app.post("/signup", checkuser, store.single("profilePic"), async (req, res) => {
         if (usr) {
             return res.status(401).render("signup", {
                 error: "User already exists",
-
-                currentUser: req.user ? req.user.username : null,
+                user: req.user ? await User.findOne({ username: req.user.username }) : null,
             });
         } else if (!passMatch) {
             return res.status(401).render("signup", {
                 error: "Passwords do not match",
-                currentUser: req.user ? req.user.username : null,
+                user: req.user ? await User.findOne({ username: req.user.username }) : null,
             });
         } else {
             let hashed_pass = await bcrypt.hash(req.body.password, 10);
-            if (req.file) {
-                let img = fs.readFileSync(req.file.path).toString("base64");
-            }
             const user = new User({
                 username: req.body.username,
                 password: hashed_pass,
@@ -74,7 +80,7 @@ app.post("/signup", checkuser, store.single("profilePic"), async (req, res) => {
                 filename: req.file ? req.file.originalname : "Facebook-default-no-profile-pic.jpg",
                 contentType: req.file ? req.file.mimetype : "image/jpeg",
                 imageBase64: req.file
-                    ? img
+                    ? fs.readFileSync(req.file.path).toString("base64")
                     : fs.readFileSync("./public/Facebook-default-no-profile-pic.jpg").toString("base64"),
             });
             try {
@@ -92,15 +98,13 @@ app.post("/signup", checkuser, store.single("profilePic"), async (req, res) => {
     }
 });
 
-app.get("/login", checkuser, (req, res) => {
-    console.log(req.query);
+app.get("/login", checkuser, async (req, res) => {
     if (req.user) {
         res.redirect("/");
     } else {
         res.render("login", {
             error: false,
-            currentUser: req.user ? req.user : null,
-            username: req.query.username ? req.query.username : "",
+            currentUser: req.user ? await User.findOne({ username: req.user.username }) : null,
             msg: req.query.msg ? req.query.msg : null,
         });
     }
@@ -127,24 +131,13 @@ app.get("/logout", checkuser, (req, res) => {
     res.redirect("/");
 });
 
-app.get("*", checkuser, (req, res) => {
+app.get("*", checkuser, async (req, res) => {
     res.status(404).render("errors/404", {
         isUser: req.user ? true : false,
-        currentUser: req.user ? req.user.username : null,
+        currentUser: req.user ? await User.findOne({ username: req.user.username }) : null,
     });
 });
 
 app.listen(process.env.PORT || 3201, () => {
     console.log("Running on port 3201");
 });
-
-const imageMimeTypes = ["image/jpeg", "image/png", "image/gif"];
-function saveProfpic(user, file) {
-    if (file == null) return;
-    const prof = JSON.parse(file);
-
-    if (prof != null && imageMimeTypes.includes(prof.type)) {
-        user.profPic = new Buffer.from(prof.data, "base64");
-        user.profPicType = prof.type;
-    }
-}

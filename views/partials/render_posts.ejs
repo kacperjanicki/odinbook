@@ -24,11 +24,57 @@
 
             <div class="post-body"><%= post.body %></div>
         </div>
-
+        <div class="modaldiv">
+            <% if(post.likes.length==0){ %>
+                <span>
+                    No one liked this post yet
+                </span> 
+               
+            <% }else if(post.likes.length==1){ %>
+                <span class="likecount">
+                    <%= post.likes.length %> like
+                </span>
+               
+            <%}else{ %>
+                <span class="likecount">
+                    <%= post.likes.length %> likes
+                </span>
+                
+            <% } %> 
+            <div class="likeModal">
+                <div class="likeModalContent">
+                    <div class="close">X</div>
+                    Likes
+                    <div class="modalContainer">
+                        <% post.likes.map((like)=>{ %>
+                            <div class="modalBody">
+                                <div class="modalBodyLeft">
+                                    <img
+                                    src="data:<%=like.contentType%>;base64,<%=like.imageBase64%>"
+                                
+                                />
+                                <a href="/profile/<%= like.username %>"><%= like.username %> </a>
+                                </div>
+                        
+                      
+                        
+                                <%- include("./add_friend",{like:like}) %> 
+                           
+                            
+                       
+                              
+                            </div>
+                           
+                        <% }) %> 
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
         <div>
             <div class="post-bottom">
                 <div>
-                    <% if(!post.likes.includes(currentUser)){ %>
+                    <% if(currentUser){ %> <% if(!post.liked){ %>
                     <form action="/posts/<%=String(post._id) %>/like" method="POST">
                         <button>Like</button>
                     </form>
@@ -36,9 +82,11 @@
                     <form action="/posts/<%=String(post._id) %>/dislike" method="POST">
                         <button>Dislike</button>
                     </form>
+                    <% } %> <% }else{ %>
+                    <button disabled>Like</button>
                     <% } %>
                 </div>
-                <% if(currentUser && post.author == currentUser){ %>
+                <% if(currentUser && post.author == currentUser.username){ %>
                 <form method="POST" action="/posts/<%=String(post._id) %>?_method=DELETE">
                     <button type="submit">Delete post</button>
                 </form>
@@ -62,11 +110,14 @@
             >
                 <button id="<%= post._id %>" type="button">X hide</button>
                 <div class="comment-send">
-                    <!-- <img
-                        src="data:<user.contentType%>;base64,<user.imageBase64%>"
+                    <% if(currentUser){ %>
+                        <img
+                        src="data:<%=currentUser.contentType%>;base64,<%=currentUser.imageBase64%>"
                         alt=""
-                        style="height: 2rem"
-                    /> -->
+                        style="height: 1rem"
+                    />
+                    <% } %> 
+                    
                     <textarea
                         name="body"
                         cols="30"
@@ -74,14 +125,20 @@
                         minlength="1"
                         placeholder="Write a comment..."
                     ></textarea>
-                    <button>Send</button>
+                    <button <%= currentUser?'':("disabled") %>>Send</button>
                 </div>
             </form>
 
             <div id="<%= post._id %>" class="comment">
-                Comments <% post.comments.map(comment=>{ %>
-                <div><%= comment.body %></div>
-                <% }) %>
+                Comments <% if(post.comments){post.comments.map(comment=>{ %>
+                <div class="commentObj">
+                    <%= comment.createdAt.toLocaleString() %> 
+                    <img style="height:1rem"src="data:<%=comment.author.contentType%>;base64,<%=comment.author.imageBase64%>">
+                    <div><%= comment.body %></div>
+
+                </div>
+                   
+                <% })} %>
             </div>
         </div>
     </div>

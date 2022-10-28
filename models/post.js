@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const user = require("./user");
 const postSchema = new mongoose.Schema({
     body: {
         type: String,
@@ -18,16 +17,17 @@ const postSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
     },
-    likes: {
-        type: Array,
-        required: false,
-        default: [],
-    },
-    comments: {
-        type: Array,
-        required: false,
-        default: [],
-    },
+    likes: [{ type: Schema.Types.ObjectId, ref: "User", sparse: true }],
+    comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
+});
+
+postSchema.pre("find", function (next) {
+    this.populate("likes");
+    next();
+});
+postSchema.pre("findOne", function (next) {
+    this.populate("likes");
+    next();
 });
 
 module.exports = mongoose.model("Post", postSchema);

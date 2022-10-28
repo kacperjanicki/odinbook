@@ -1,0 +1,7 @@
+Are you sure you want to delete your profile?
+<form action="/profile/<%= currentUser.username %>/delete" method="POST">
+    <button>Yes</button>
+</form>
+<form action="/profile/<%= currentUser.username %>">
+    <button>No</button>
+</form>

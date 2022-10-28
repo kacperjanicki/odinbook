@@ -1,21 +1,27 @@
-<form action="/profile/<%= user.username %>/edit" enctype="multipart/form-data" method="POST">
+<form action="/profile/<%= currentUser.username %>/edit" enctype="multipart/form-data" method="POST">
     <% if(error){ %> <%= error %> <% } %> <% if(msg){ %> <%= msg %> <% } %>
     <div>
         <label for="username">Username: </label>
-        <input type="text" name="username" value="<%= user.username %>" disabled />
+        <input type="text" name="username" value="<%= currentUser.username %>" disabled />
     </div>
     <div>
         <label for="date">Date of birth: </label>
-        <input type="date" name="date" required value="<%= user.dateOfBirth.toISOString().split("T")[0] %>" />
+        <input type="date" name="date" required value="<%= currentUser.dateOfBirth.toISOString().split("T")[0]
+        %>" />
     </div>
     <div>
         <label for="profpic">Profile picture:</label>
         <input type="file" name="profilePic" />
         <div>
-            <% if(user.imageBase64){ %>
-            <img src="data:<%=user.contentType%>;base64,<%=user.imageBase64%>" alt="" style="height: 3rem" />
+            <% if(currentUser.imageBase64){ %>
+            <img
+                src="data:<%=currentUser.contentType%>;base64,<%=currentUser.imageBase64%>"
+                alt=""
+                style="height: 3rem"
+            />
             <% }else{ %> Add profile picture <% } %>
         </div>
     </div>
+    <a style="color: red" href="/profile/<%= currentUser.username %>/delete">Delete account</a>
     <button type="submit">Submit</button>
 </form>

@@ -9,21 +9,24 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    friends: {
-        type: Array,
-        required: false,
-        default: [],
-    },
-    friend_requests: {
-        type: Array,
-        required: false,
-        default: [],
-    },
-    sent_requests: {
-        type: Array,
-        required: false,
-        default: [],
-    },
+    friends: [{ type: Schema.Types.ObjectId, ref: "User" }],
+
+    friend_requests: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            required: false,
+            default: [],
+        },
+    ],
+    sent_requests: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            required: false,
+            default: [],
+        },
+    ],
     joined: {
         type: Date,
         required: false,

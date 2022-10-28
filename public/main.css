@@ -5,9 +5,64 @@
 .comment {
     display: none;
 }
-/* .comment textarea {
-    resize: none;
-} */
+.commentObj {
+    display: flex;
+}
+.likeModal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+.modalBody {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.modalBodyLeft {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.modalContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.modalBodyLeft img {
+    height: 2.5rem;
+}
+
+/* like modal 'add to friends button' */
+.modalBody button {
+    width: 100px;
+}
+
+.likeModalContent {
+    background-color: #f4f4f4;
+    margin: 20% auto;
+    text-align: center;
+    width: 40%;
+    overflow: auto;
+    padding: 0.2rem;
+    box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2);
+}
+.close {
+    float: right;
+    color: grey;
+}
+.close:hover,
+.close:focus {
+    cursor: pointer;
+    color: black;
+}
+
 .comments-visible {
     display: initial;
 }

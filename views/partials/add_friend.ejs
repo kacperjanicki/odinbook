@@ -1,19 +1,22 @@
-<% if(msg){ %>
+<% if(msg!="Logged in"){ %>
 <div><%= msg %></div>
-<% } %> <% if(isPersonal){ %>
-<a href="/profile/<%= user.username%>/edit">Edit profile</a>
-<% }else if(!isPersonal && !currentUser){ %>
-<a href="/profile/<%= user.username %>?msg=Login required" style="color: grey">Add to friends</a>
-<% }else if(!isPersonal && !isFriend && !sentRequest){ %>
-<form action="/profile/<%= user.username%>/add" method="POST">
+<!--
+like is a variable that lets distinguish wheter
+this partial is used on user page or like modal 
+-->
+<% }if(!currentUser){ %>
+<button disabled>Add to friends (login required)</button>
+<% }else if(like ? !like.isPersonal && !like.sentReq && !like.isFriend : !isPersonal && !isFriend &&
+!sentRequest){ %>
+<form action="/profile/<%= like ? like.username :user.username%>/add" method="POST">
     <button>Add to friends</button>
 </form>
-<% }else if(!isPersonal && isFriend){ %>
-<form action="/profile/<%= user.username%>/removeFriend" method="POST">
+<% }else if(like ? !like.isPersonal && like.isFriend : !isPersonal && isFriend){ %>
+<form action="/profile/<%= like ? like.username :user.username%>/removeFriend" method="POST">
     <button>Remove from friends</button>
 </form>
-<% }else if(!isPersonal && sentRequest){ %>
-<form action="/profile/<%= user.username%>/unsendReq" method="POST">
-    <button>Unsend friend request</button>
+<% }else if(like ? !like.isPersonal && like.sentReq : !isPersonal && sentRequest){ %>
+<form action="/profile/<%= like ? like.username :user.username%>/unsendReq" method="POST">
+    <button type="submit">Unsend friend request</button>
 </form>
 <% } %>

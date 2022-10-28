@@ -2,10 +2,8 @@
     <% if(error){ %> <%= error %> <% } %> <% if(msg){ %> <%= msg %> <% } %>
     <div>
         <label for="username">Username: </label>
-        <% if(username){ %>
-        <input type="text" name="username" required value="<%= username %>" /> <% }else{ %>
+
         <input type="text" name="username" required />
-        <% } %>
     </div>
     <div>
         <label for="password">Password: </label>

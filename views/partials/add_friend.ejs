@@ -6,7 +6,21 @@ this partial is used on user page or like modal
 -->
 <% }if(!currentUser){ %>
 <button disabled>Add to friends (login required)</button>
-<% }else if(like ? !like.isPersonal && !like.sentReq && !like.isFriend : !isPersonal && !isFriend &&
+<!-- prettier-ignore -->
+<% }else if(like ? like.awaitingReq : awaitingRequest){ %>
+<form
+    action="/profile/<%= currentUser.username %>/acceptreq?person=<%=  like ? like.awaitingReq : awaitingRequest.username %>&type=accept"
+    method="POST"
+>
+    <button type="submit">Accept</button>
+</form>
+<form
+    action="/profile/<%=currentUser.username   %>/acceptreq?person=<%= like ? like.awaitingReq : awaitingRequest.username %>&type=decline"
+    method="POST"
+>
+    <button type="submit">Decline</button>
+</form>
+<% } else if(like ? !like.isPersonal && !like.sentReq && !like.isFriend : !isPersonal && !isFriend &&
 !sentRequest){ %>
 <form action="/profile/<%= like ? like.username :user.username%>/add" method="POST">
     <button>Add to friends</button>

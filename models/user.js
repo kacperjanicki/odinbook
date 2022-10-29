@@ -52,4 +52,9 @@ const userSchema = new mongoose.Schema({
     posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
 });
 
+userSchema.pre("find", function (next) {
+    this.populate("sent_requests");
+    next();
+});
+
 module.exports = mongoose.model("User", userSchema);

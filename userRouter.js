@@ -10,21 +10,25 @@ router.get("/:username", isUser, async (req, res) => {
     const URLuser = await User.findOne({ username: req.params.username })
         .populate("friend_requests")
         .populate("friends");
-    if (URLuser) {
-        // URLuser.friend_requests.forEach((request) => {
-        //     console.log(request.username == req.currentUser.username);
-        //     request.thisUser = true
-        // });
 
-        let isFriend = URLuser.friends.filter((friend) => friend._id.equals(req.currentUser._id)).length > 0;
+    if (URLuser) {
+        // let sentReq =
+        // URLuser.sent_requests.filter((request) => request._id.equals(req.currentUser._id)).length > 0;
         res.render("user_page", {
             currentUser: req.currentUser,
             user: URLuser,
             msg: req.query.msg,
             like: false,
-            isFriend: req.currentUser ? isFriend : false,
+            isFriend: req.currentUser
+                ? URLuser.friends.filter((friend) => friend._id.equals(req.currentUser._id)).length > 0
+                : false,
             isPersonal: req.currentUser ? URLuser.username == req.currentUser.username : false,
-            sentRequest: req.currentUser ? req.currentUser.sent_requests.includes(URLuser._id) : false,
+            awaitingRequest: req.currentUser
+                ? req.currentUser.friend_requests.filter((request) => request.equals(URLuser._id))[0]
+                : false,
+            sentRequest: req.currentUser
+                ? req.currentUser.sent_requests.filter((request) => request.equals(URLuser._id)).length > 0
+                : false,
         });
     } else {
         res.render("errors/404", { currentUser: req.currentUser });
@@ -85,8 +89,14 @@ router.post("/:username/add", isUser, requireLogin, async (req, res) => {
         if (!user.friends.includes(this_user._id) && !this_user.sent_requests.includes(user._id)) {
             user.friend_requests.push(this_user._id);
             this_user.sent_requests.push(user._id);
-            await user.update({ friend_requests: user.friend_requests }).populate("friend_requests");
-            await this_user.update({ sent_requests: this_user.sent_requests }).populate("sent_requests");
+            await User.updateOne(
+                { username: user.username },
+                { friend_requests: user.friend_requests }
+            ).populate("friend_requests");
+            await User.updateOne(
+                { username: this_user.username },
+                { sent_requests: this_user.sent_requests }
+            ).populate("sent_requests");
             res.redirect("/profile/" + req.params.username + "?msg=Friend request sent");
         } else {
             res.redirect("/");
@@ -96,31 +106,22 @@ router.post("/:username/add", isUser, requireLogin, async (req, res) => {
 
 router.post("/:username/removeFriend", isUser, async (req, res) => {
     let friendDel = await User.findOne({
-        username: req.params.username,
+        username: req.query.friend,
     }).populate("friends");
     let currentUser = await User.findOne({ username: req.currentUser.username }).populate("friends");
 
     try {
-        let myFilteredFriends = currentUser.friends.filter(
-            (friend) => friend._id.toHexString() != friendDel._id.toHexString()
-        );
+        let myFilteredFriends = currentUser.friends.filter((friend) => !friend._id.equals(friendDel._id));
 
-        let userFilteredFriends = friendDel.friends.filter(
-            (friend) => friend._id.toHexString() != currentUser._id.toHexString()
-        );
+        let userFilteredFriends = friendDel.friends.filter((friend) => !friend._id.equals(currentUser._id));
+
         await User.updateOne({ username: currentUser.username }, { friends: myFilteredFriends }); //change current user friends list
         await User.updateOne({ username: friendDel.username }, { friends: userFilteredFriends }); //change friend friend's list
-        res.redirect("/profile/" + friendDel.username + "?msg=Friend removed successfully");
+        res.redirect("/profile/" + currentUser.username + "?msg=Friend removed successfully");
     } catch (err) {
         res.redirect("/");
         console.log(err);
     }
-    // let this_user = await User.findOne({ username: req.params.username });
-    // let user = await User.findOne({ username: req.currentUser.username });
-    // const selfFriends = this_user.friends.filter((user) => user != req.currentUser.username);
-    // const updatedFriends = user.friends.filter((user) => user != this_user.username);
-    // await this_user.update({ friends: selfFriends });
-    // await user.update({ friends: updatedFriends });
 });
 
 router.post("/:username/unsendReq", isUser, async (req, res) => {
@@ -139,7 +140,6 @@ router.post("/:username/unsendReq", isUser, async (req, res) => {
 });
 
 router.post("/:username/acceptreq", isUser, personalContent, async (req, res) => {
-    console.log(req.query.person);
     try {
         let this_user = req.currentUser;
         let sender = await User.findOne({ username: req.query.person });
@@ -155,10 +155,17 @@ router.post("/:username/acceptreq", isUser, personalContent, async (req, res) =>
             sender.friends.push(this_user._id);
         }
 
-        await this_user.update({ friend_requests: newReq, friends: this_user.friends });
-        await sender.update({ sent_requests: newSenderReq, friends: sender.friends });
+        await User.updateOne(
+            { username: this_user.username },
+            { friend_requests: newReq, friends: this_user.friends }
+        );
+        await User.updateOne(
+            { username: sender.username },
+            { sent_requests: newSenderReq, friends: sender.friends }
+        );
         res.redirect("/profile/" + req.params.username);
-    } catch {
+    } catch (err) {
+        console.error(err);
         res.redirect("/profile/" + req.params.username + "?msg=Error with accepting request");
     }
 });

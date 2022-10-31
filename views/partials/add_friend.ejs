@@ -1,36 +1,51 @@
 <% if(msg!="Logged in"){ %>
 <div><%= msg %></div>
+<% } %>
 <!--
 like is a variable that lets distinguish wheter
 this partial is used on user page or like modal 
 -->
-<% }if(!currentUser){ %>
-<button disabled>Add to friends (login required)</button>
-<!-- prettier-ignore -->
-<% }else if(like ? like.awaitingReq : awaitingRequest){ %>
-<form
-    action="/profile/<%= currentUser.username %>/acceptreq?person=<%=  like ? like.awaitingReq : awaitingRequest.username %>&type=accept"
-    method="POST"
->
-    <button type="submit">Accept</button>
-</form>
-<form
-    action="/profile/<%=currentUser.username   %>/acceptreq?person=<%= like ? like.awaitingReq : awaitingRequest.username %>&type=decline"
-    method="POST"
->
-    <button type="submit">Decline</button>
-</form>
-<% } else if(like ? !like.isPersonal && !like.sentReq && !like.isFriend : !isPersonal && !isFriend &&
-!sentRequest){ %>
-<form action="/profile/<%= like ? like.username :user.username%>/add" method="POST">
-    <button>Add to friends</button>
-</form>
-<% }else if(like ? !like.isPersonal && like.isFriend : !isPersonal && isFriend){ %>
-<form action="/profile/<%= like ? like.username :user.username%>/removeFriend" method="POST">
-    <button>Remove from friends</button>
-</form>
-<% }else if(like ? !like.isPersonal && like.sentReq : !isPersonal && sentRequest){ %>
-<form action="/profile/<%= like ? like.username :user.username%>/unsendReq" method="POST">
-    <button type="submit">Unsend friend request</button>
-</form>
-<% } %>
+<div class="addFriendButtonContainer">
+    <% if(!currentUser){ %>
+    <button disabled>Add to friends (login required)</button>
+    <!-- prettier-ignore -->
+    <% }else if(like ? like.awaitingReq : (this_user ? (!this_user.isPersonal ? this_user.awaitingReq:false) : awaitingRequest)){ %>
+    <form
+        action="/profile/<%= currentUser.username %>/acceptreq?person=<%=  like ? like.awaitingReq : (this_user.awaitingReq ? this_user.awaitingReq: awaitingRequest.username) %>&type=accept"
+        method="POST"
+    >
+        <button type="submit">Accept</button>
+    </form>
+    <form
+        action="/profile/<%=currentUser.username   %>/acceptreq?person=<%= like ? like.awaitingReq : (this_user.awaitingReq ? this_user.awaitingReq: awaitingRequest.username) %>&type=decline"
+        method="POST"
+    >
+        <button type="submit">Decline</button>
+    </form>
+    <% } else if(like ? (!like.isPersonal && !like.sentReq && !like.isFriend) :( this_user ?
+    (!this_user.isPersonal&&!this_user.isFriend&&!this_user.sentReq ):(!isPersonal && !isFriend &&
+    !sentRequest))){ %>
+    <form
+        action="/profile/<%= like ? like.username :(this_user ? this_user.username :user.username)%>/add"
+        method="POST"
+    >
+        <button>Add to friends</button>
+    </form>
+    <% }else if(like ? !like.isPersonal && like.isFriend : (this_user ?
+    this_user.isFriend&&!this_user.isPersonal : !isPersonal && isFriend)){ %>
+    <form
+        action="/profile/<%= currentUser.username %>/removeFriend?friend=<%= like ? like.username :(this_user ? this_user.username:user.username)%>"
+        method="POST"
+    >
+        <button>Remove from friends</button>
+    </form>
+    <% }else if(like ? !like.isPersonal && like.sentReq :( this_user ? !this_user.isPersonal &&
+    this_user.sentReq : !isPersonal && sentRequest)){ %>
+    <form
+        action="/profile/<%= like ? like.username :(this_user ? this_user.username : user.username)%>/unsendReq"
+        method="POST"
+    >
+        <button type="submit">Unsend friend request</button>
+    </form>
+    <% } %>
+</div>

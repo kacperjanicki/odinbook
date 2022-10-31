@@ -1,6 +1,9 @@
 * {
     font-family: "Roboto", sans-serif;
 }
+.navbar a {
+    color: black;
+}
 
 .comment {
     display: none;
@@ -19,16 +22,33 @@
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.3);
 }
+.addFriendButtonContainer {
+    display: flex;
+    align-items: center;
+}
+
 .modalBody {
+    border: 1px solid black;
     display: flex;
     justify-content: space-between;
-    width: 100%;
+    width: 500px;
+    padding: 0.5rem;
 }
+.inLike {
+    width: 70%;
+}
+
 .modalBodyLeft {
     display: flex;
+    display: inline-block;
     align-items: center;
     gap: 0.5rem;
 }
+.imgContainer {
+    display: flex;
+    flex-direction: column;
+}
+
 .modalContainer {
     display: flex;
     flex-direction: column;
@@ -36,7 +56,11 @@
 }
 
 .modalBodyLeft img {
-    height: 2.5rem;
+    height: 50px;
+    width: max-content;
+}
+.username {
+    font-size: 0.7rem;
 }
 
 /* like modal 'add to friends button' */
@@ -49,7 +73,7 @@
     margin: 20% auto;
     text-align: center;
     width: 40%;
-    overflow: auto;
+    overflow: hidden;
     padding: 0.2rem;
     box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2);
 }
@@ -69,6 +93,13 @@
 .date {
     font-size: 0.5rem;
 }
+.img-container {
+    display: flex;
+    flex-direction: column;
+}
+.img-container a {
+    font-size: 0.6rem;
+}
 
 .posts-container {
     display: flex;
@@ -77,19 +108,24 @@
     flex-direction: column;
     gap: 1rem;
 }
+.post {
+    padding: 0.4rem;
+    background-color: white;
+    border-radius: 10px;
+}
+
 .post-user {
     display: flex;
-
-    align-items: center;
-    gap: 0.5rem;
+    gap: 0.2rem;
 }
 .post-user-info {
+    width: 100%;
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
 }
 .post-user img {
-    width: 20px;
-    height: 20px;
+    width: auto;
+    height: 2.5rem;
     border-radius: 50%;
 }
 .post-bottom {

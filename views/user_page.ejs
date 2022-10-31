@@ -1,4 +1,4 @@
-<div><%= user.username %></div>
+<div><%= user.fname %> <%= user.lname %></div>
 <div>
     <% if(user.imageBase64){ %>
     <img src="data:<%=user.contentType%>;base64,<%=user.imageBase64%>" alt="" style="height: 3rem" />

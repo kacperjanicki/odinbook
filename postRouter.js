@@ -7,10 +7,12 @@ const methodOverride = require("method-override");
 router.use(methodOverride("_method"));
 const ObjectId = require("mongodb").ObjectId;
 const isPostLiked = require("./public/postLiked");
+const requireLogin = require("./middleware/requireLogin");
 
 router.get("/", isUser, async (req, res) => {
     var posts = await Post.find({}).populate("author").populate("comments");
     isPostLiked(posts, req.currentUser);
+
     res.render("all_posts", {
         posts: posts,
         currentUser: req.currentUser,
@@ -18,15 +20,11 @@ router.get("/", isUser, async (req, res) => {
     });
 });
 
-router.get("/new", isUser, async (req, res) => {
-    if (req.currentUser) {
-        res.render("new_post", {
-            post: false,
-            currentUser: req.currentUser,
-        });
-    } else {
-        return res.json(400, { msg: "Access denied" });
-    }
+router.get("/new", isUser, requireLogin, async (req, res) => {
+    res.render("new_post", {
+        post: false,
+        currentUser: req.currentUser,
+    });
 });
 router.post("/new", isUser, async (req, res) => {
     const author = await User.findOne({ username: req.currentUser.username });
@@ -35,7 +33,7 @@ router.post("/new", isUser, async (req, res) => {
             body: req.body.body,
             author: author._id,
             createdAt: Date.now(),
-            public: req.body.public == "on",
+            privacy: req.body.public == "on" ? "public" : req.body.friends == "on" ? "friends" : "private",
             likes: [],
             comments: [],
         });
@@ -124,7 +122,6 @@ router.post("/:id/dislike", isUser, async (req, res) => {
     res.redirect("back");
 });
 
-const requireLogin = require("./middleware/requireLogin");
 const Comment = require("./models/comment");
 router.post("/:id/comment", isUser, requireLogin, async (req, res) => {
     try {

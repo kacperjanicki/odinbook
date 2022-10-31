@@ -6,13 +6,17 @@
             href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400&display=swap"
             rel="stylesheet"
         />
-        <link rel="stylesheet" href="/main.css" />
+        <link rel="stylesheet" href="/css/main.css" />
+        <link rel="stylesheet" href="/css/media.css" />
+        <link rel="stylesheet" href="/css/darkMode.css" />
     </head>
     <body>
         <!-- <script src="../facebookLogin.js"></script> -->
-
+        <div class="bg-img light"></div>
         <%- include('./partials/navbar.ejs') %> <%- body %>
+        <script src="/toggleMode.js"></script>
         <script src="/commentDisplay.js"></script>
         <script src="/likeModal.js"></script>
+        <script src="/checkbox.js"></script>
     </body>
 </html>

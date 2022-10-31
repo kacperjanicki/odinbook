@@ -5,6 +5,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    fname: {
+        type: String,
+        required: true,
+    },
+    lname: {
+        type: String,
+        required: true,
+    },
     password: {
         type: String,
         required: true,
@@ -39,7 +47,6 @@ const userSchema = new mongoose.Schema({
     filename: {
         type: String,
         required: true,
-        unique: true,
     },
     contentType: {
         type: String,

@@ -6,7 +6,6 @@ function isLikeFriend(posts, user) {
                 like.isFriend = false;
                 like.sentReq = false;
                 like.awaitingReq = false;
-                console.log(like.username);
                 if (like.sent_requests.filter((request) => request.equals(user._id)).length > 0) {
                     like.awaitingReq = like.username;
                 }
@@ -17,9 +16,7 @@ function isLikeFriend(posts, user) {
                 if (user.friends.includes(like._id)) {
                     like.isFriend = true;
                 }
-                if (user.sent_requests.includes(like._id)) {
-                    like.sentReq = true;
-                }
+                like.sentReq = user.sent_requests.filter((request) => request.equals(like._id)).length > 0;
             });
         });
     }

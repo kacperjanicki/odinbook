@@ -10,7 +10,7 @@ module.exports = async (req, res, next) => {
             .populate("sent_requests");
         next();
     } catch (e) {
-        req.currentUser = null;
+        req.currentUser = false;
         next();
         // return res.status(400).json({ msg: "access denied" });
     }

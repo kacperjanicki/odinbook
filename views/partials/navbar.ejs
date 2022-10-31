@@ -1,7 +1,8 @@
-<nav>
+<nav class="navbar">
     <a href="/">Home</a>
+    <a href="/users">All Users</a>
     <a href="/posts">Posts</a>
-    <% if(currentUser!= null){ %>
+    <% if(currentUser){ %>
     <a href="/posts/new">New Post</a>
     <a href="/logout">Log out</a>
     <a href="/profile/<%=currentUser.username %>">Profile</a>
@@ -9,4 +10,5 @@
     <a href="/login">Log in</a>
     <a href="/signup">Sign up</a>
     <% } %>
+    <button id="lightmodeToggle">Light mode</button>
 </nav>

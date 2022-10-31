@@ -1,141 +1,146 @@
 <div class="posts-container">
-    <% posts.map(post=>{ %> <% if(post.public && post.author){ %>
-    <div class="post">
-        <div class="post-main">
-            <div class="post-user">
-                <div class="img-container">
-                    <a href="/profile/<%= post.author.username %>">
-                        <img
-                            src="data:<%=post.author.contentType%>;base64,<%=post.author.imageBase64%>"
-                            alt=""
-                            style="height: 1.5rem"
-                        />
-                    </a>
-                </div>
-
-                <div class="post-user-info">
-                    <a href="/profile/<%= post.author.username %>"><%= post.author.username %></a>
-                    <a href="/posts/<%=String(post._id) %>" class="date">
-                        <%= post.createdAt.toISOString().split('T')[0] %> <%=
-                        post.createdAt.toLocaleString().split(',')[1].slice(0,6) %>
-                    </a>
-                </div>
-            </div>
-
-            <div class="post-body"><%= post.body %></div>
-        </div>
-        <div class="modaldiv">
-            <% if(post.likes.length==0){ %>
-                <span>
-                    No one liked this post yet
-                </span> 
-               
-            <% }else if(post.likes.length==1){ %>
-                <span class="likecount">
-                    <%= post.likes.length %> like
-                </span>
-               
-            <%}else{ %>
-                <span class="likecount">
-                    <%= post.likes.length %> likes
-                </span>
-                
-            <% } %> 
-            <div class="likeModal">
-                <div class="likeModalContent">
-                    <div class="close">X</div>
-                    Likes
-                    <div class="modalContainer">
-                        <% post.likes.map((like)=>{ %>
-                            <div class="modalBody">
-                                <div class="modalBodyLeft">
-                                    <img
-                                    src="data:<%=like.contentType%>;base64,<%=like.imageBase64%>"
-                                
-                                />
-                                <a href="/profile/<%= like.username %>"><%= like.username %> </a>
-                                </div>
-                     
-                                <%- include("./add_friend",{like:like}) %> 
-                      
-                            </div>
+    <% posts.map(post=> {
+        if( (post.privacy == "public") || (currentUser ? (post.privacy=="private" && post.author.equals(currentUser._id) || post.privacy=="friends" &&  currentUser.friends.filter((friend)=>friend.equals(post.author._id)).length>0 || post.author.equals(currentUser._id) ):false)){ %>
+        <div class="post">
+            <div class="post-main">
+                <div class="post-user">
+                    <div class="img-container">
+                        <a href="/profile/<%= post.author.username%>">
+                            <img
+                                src="data:<%=post.author.contentType%>;base64,<%=post.author.imageBase64%>"
+                                alt=""
+                          
+                            />
+                        </a>
+                        <a href="/profile/<%= post.author.username %>"><%= post.author.username%></a>
                            
-                        <% }) %> 
+                        
                     </div>
+
+                    <div class="post-user-info">
+                        <%= post.author.fname %> <%= post.author.lname%>
+                        <a href="/posts/<%=String(post._id) %>" class="date">
+                            <%= post.createdAt.toISOString().split('T')[0] %> <%=
+                            post.createdAt.toLocaleString().split(',')[1].slice(0,6) %>
+                            <%= post.privacy %> 
+                        </a>
+                    </div>
+                </div>
+
+                <div class="post-body"><%= post.body %></div>
+            </div>
+            <div class="modaldiv">
+                <% if(post.likes.length==0){ %>
+                    <span>
+                        No one liked this post yet
+                    </span> 
+                
+                <% }else if(post.likes.length==1){ %>
+                    <span class="likecount">
+                        <%= post.likes.length %> like
+                    </span>
+                
+                <%}else{ %>
+                    <span class="likecount">
+                        <%= post.likes.length %> likes
+                    </span>
                     
+                <% } %> 
+                <div class="likeModal">
+                    <div class="likeModalContent">
+                        <div class="close">X</div>
+                        Likes
+                        <div class="modalContainer">
+                            <% post.likes.map((like)=>{ %>
+                                <div class="modalBody inLike">
+                                    <div class="modalBodyLeft">
+                                        <img
+                                        src="data:<%=like.contentType%>;base64,<%=like.imageBase64%>"
+                                    
+                                    />
+                                    <a href="/profile/<%= like.username %>"><%= like.username %> </a>
+                                    </div>
+                        
+                                    <%- include("./add_friend",{like:like}) %> 
+                        
+                                </div>
+                            
+                            <% }) %> 
+                        </div>
+                        
+                    </div>
                 </div>
             </div>
-        </div>
-        <div>
-            <div class="post-bottom">
-                <div>
-                    <% if(currentUser){ %> <% if(!post.liked){ %>
-                    <form action="/posts/<%=String(post._id) %>/like" method="POST">
-                        <button>Like</button>
+            <div>
+                <div class="post-bottom">
+                    <div>
+                        <% if(currentUser){ %> <% if(!post.liked){ %>
+                        <form action="/posts/<%=String(post._id) %>/like" method="POST">
+                            <button>Like</button>
+                        </form>
+                        <% }else{ %>
+                        <form action="/posts/<%=String(post._id) %>/dislike" method="POST">
+                            <button>Dislike</button>
+                        </form>
+                        <% } %> <% }else{ %>
+                        <button disabled>Like</button>
+                        <% } %>
+                    </div>
+                    <% if(currentUser && post.author == currentUser.username){ %>
+                    <form method="POST" action="/posts/<%=String(post._id) %>?_method=DELETE">
+                        <button type="submit">Delete post</button>
+                    </form>
+                    <% if(!post.public){ %>
+                    <form method="POST" action="/posts/<%=String(post._id) %>?public=true">
+                        <button type="submit">Publish</button>
                     </form>
                     <% }else{ %>
-                    <form action="/posts/<%=String(post._id) %>/dislike" method="POST">
-                        <button>Dislike</button>
+                    <form method="POST" action="/posts/<%=String(post._id) %>?public=false">
+                        <button type="submit">Hide post</button>
                     </form>
-                    <% } %> <% }else{ %>
-                    <button disabled>Like</button>
-                    <% } %>
+                    <% } %><a href="/posts/<%=String(post._id) %>/edit">Edit</a> <% } %>
+                    <button id="<%= post._id %>" class="comment-display">Comment</button>
                 </div>
-                <% if(currentUser && post.author == currentUser.username){ %>
-                <form method="POST" action="/posts/<%=String(post._id) %>?_method=DELETE">
-                    <button type="submit">Delete post</button>
-                </form>
-                <% if(!post.public){ %>
-                <form method="POST" action="/posts/<%=String(post._id) %>?public=true">
-                    <button type="submit">Publish</button>
-                </form>
-                <% }else{ %>
-                <form method="POST" action="/posts/<%=String(post._id) %>?public=false">
-                    <button type="submit">Hide post</button>
-                </form>
-                <% } %><a href="/posts/<%=String(post._id) %>/edit">Edit</a> <% } %>
-                <button id="<%= post._id %>" class="comment-display">Comment</button>
-            </div>
 
-            <form
-                action="/posts/<%=String(post._id) %>/comment"
-                method="POST"
-                class="comment"
-                id="<%= String(post._id) %>"
-            >
-                <button id="<%= post._id %>" type="button">X hide</button>
-                <div class="comment-send">
-                    <% if(currentUser){ %>
-                        <img
-                        src="data:<%=currentUser.contentType%>;base64,<%=currentUser.imageBase64%>"
-                        alt=""
-                        style="height: 1rem"
-                    />
-                    <% } %> 
+                <form
+                    action="/posts/<%=String(post._id) %>/comment"
+                    method="POST"
+                    class="comment"
+                    id="<%= String(post._id) %>"
+                >
+                    <button id="<%= post._id %>" type="button">X hide</button>
+                    <div class="comment-send">
+                        <% if(currentUser){ %>
+                            <img
+                            src="data:<%=currentUser.contentType%>;base64,<%=currentUser.imageBase64%>"
+                            alt=""
+                            style="height: 1rem"
+                        />
+                        <% } %> 
+                        
+                        <textarea
+                            name="body"
+                            cols="30"
+                            rows="1"
+                            minlength="1"
+                            placeholder="Write a comment..."
+                        ></textarea>
+                        <button <%= currentUser?'':("disabled") %> >Send</button>
+                    </div>
+                </form>
+
+                <div id="<%= post._id %>" class="comment">
+                    Comments <% if(post.comments){post.comments.map(comment=>{ %>
+                    <div class="commentObj">
+                        <%= comment.createdAt.toLocaleString() %> 
+                        <img style="height:1rem"src="data:<%=comment.author.contentType%>;base64,<%=comment.author.imageBase64%>">
+                        <div><%= comment.body %></div>
+
+                    </div>
                     
-                    <textarea
-                        name="body"
-                        cols="30"
-                        rows="1"
-                        minlength="1"
-                        placeholder="Write a comment..."
-                    ></textarea>
-                    <button <%= currentUser?'':("disabled") %>>Send</button>
+                    <% })} %>
                 </div>
-            </form>
-
-            <div id="<%= post._id %>" class="comment">
-                Comments <% if(post.comments){post.comments.map(comment=>{ %>
-                <div class="commentObj">
-                    <%= comment.createdAt.toLocaleString() %> 
-                    <img style="height:1rem"src="data:<%=comment.author.contentType%>;base64,<%=comment.author.imageBase64%>">
-                    <div><%= comment.body %></div>
-
-                </div>
-                   
-                <% })} %>
             </div>
         </div>
-    </div>
-    <% } %> <% }) %>
+    <% }}) %>
 </div>

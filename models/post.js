@@ -13,8 +13,8 @@ const postSchema = new mongoose.Schema({
         type: Date,
         required: true,
     },
-    public: {
-        type: Boolean,
+    privacy: {
+        type: String,
         required: true,
     },
     likes: [{ type: Schema.Types.ObjectId, ref: "User", sparse: true }],

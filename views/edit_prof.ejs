@@ -1,6 +1,14 @@
 <form action="/profile/<%= currentUser.username %>/edit" enctype="multipart/form-data" method="POST">
     <% if(error){ %> <%= error %> <% } %> <% if(msg){ %> <%= msg %> <% } %>
     <div>
+        <label for="username">First name: </label>
+        <input type="text" name="fname" required value="<%= currentUser.fname%>" />
+    </div>
+    <div>
+        <label for="username">Last name: </label>
+        <input type="text" name="lname" required value="<%= currentUser.lname%>" />
+    </div>
+    <div>
         <label for="username">Username: </label>
         <input type="text" name="username" value="<%= currentUser.username %>" disabled />
     </div>

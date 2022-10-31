@@ -21,6 +21,7 @@ const Post = require("./models/post");
 const User = require("./models/user");
 const postRouter = require("./postRouter.js");
 const userRouter = require("./userRouter.js");
+const userIndexRouter = require("./userIndexRouter.js");
 app.use(expressLayouts);
 app.use(express.static(__dirname + "/public"));
 
@@ -32,6 +33,7 @@ const db = mongoose.connection;
 
 db.on("error", (error) => console.error(error));
 
+app.use("/users", userIndexRouter);
 app.use("/posts", postRouter);
 app.use("/profile", userRouter);
 
@@ -42,8 +44,8 @@ app.get("/", checkuser, async (req, res) => {
     isPostLiked(posts, req.currentUser);
     isLikeFriend(posts, req.currentUser); //add to friends button function
     res.render("all_posts", {
+        currentUser: req.currentUser ? req.currentUser : false,
         posts: posts,
-        currentUser: req.currentUser,
         msg: req.query.pass ? "Logged in" : req.query.msg,
     });
 });
@@ -51,7 +53,7 @@ app.get("/signup", checkuser, async (req, res) => {
     res.render("signup", {
         error: false,
         msg: req.query.msg ? req.query.msg : null,
-        currentUser: req.user ? await User.findOne({ username: req.user.username }) : null,
+        currentUser: req.currentUser ? req.currentUser : false,
     });
 });
 
@@ -72,7 +74,11 @@ app.post("/signup", checkuser, store.single("profilePic"), async (req, res) => {
             });
         } else {
             let hashed_pass = await bcrypt.hash(req.body.password, 10);
+            let fnameCapitalized = req.body.fname.charAt(0).toUpperCase() + req.body.fname.slice(1);
+            let lnameCapitalized = req.body.lname.charAt(0).toUpperCase() + req.body.lname.slice(1);
             const user = new User({
+                fname: fnameCapitalized,
+                lname: lnameCapitalized,
                 username: req.body.username,
                 password: hashed_pass,
                 dateOfBirth: new Date(req.body.date),
@@ -85,11 +91,11 @@ app.post("/signup", checkuser, store.single("profilePic"), async (req, res) => {
             });
             try {
                 await user.save();
-                return res.redirect(
+                res.redirect(
                     "/login?username=" + req.body.username + "&msg=Account created, now you can log in"
                 );
             } catch (err) {
-                res.status(400).redirect("signup?msg=Error while creating an account");
+                res.status(400).redirect("/signup?msg=Error while creating an account");
                 console.error(err);
             }
         }
@@ -99,12 +105,12 @@ app.post("/signup", checkuser, store.single("profilePic"), async (req, res) => {
 });
 
 app.get("/login", checkuser, async (req, res) => {
-    if (req.user) {
+    if (req.currentUser) {
         res.redirect("/");
     } else {
         res.render("login", {
             error: false,
-            currentUser: req.user ? await User.findOne({ username: req.user.username }) : null,
+            currentUser: req.currentUser ? req.currentUser : false,
             msg: req.query.msg ? req.query.msg : null,
         });
     }

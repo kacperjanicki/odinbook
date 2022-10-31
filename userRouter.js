@@ -10,13 +10,13 @@ router.get("/:username", isUser, async (req, res) => {
     const URLuser = await User.findOne({ username: req.params.username })
         .populate("friend_requests")
         .populate("friends");
-
     if (URLuser) {
         // let sentReq =
         // URLuser.sent_requests.filter((request) => request._id.equals(req.currentUser._id)).length > 0;
         res.render("user_page", {
             currentUser: req.currentUser,
             user: URLuser,
+            this_user: false,
             msg: req.query.msg,
             like: false,
             isFriend: req.currentUser
@@ -55,6 +55,8 @@ router.post("/:username/edit", store.single("profilePic"), isUser, personalConte
                 { username: req.currentUser.username },
                 {
                     username: req.params.username,
+                    lname: req.body.lname,
+                    fname: req.body.fname,
                     dateOfBirth: req.body.date,
                     filename: req.file.originalname,
                     contentType: req.file.mimetype,
@@ -67,6 +69,8 @@ router.post("/:username/edit", store.single("profilePic"), isUser, personalConte
             await User.updateOne(
                 { username: req.currentUser.username },
                 {
+                    lname: req.body.lname,
+                    fname: req.body.fname,
                     username: req.params.username,
                     dateOfBirth: req.body.date,
                 },
@@ -125,7 +129,6 @@ router.post("/:username/removeFriend", isUser, async (req, res) => {
 });
 
 router.post("/:username/unsendReq", isUser, async (req, res) => {
-    console.log("test");
     let user = await User.findOne({ username: req.params.username });
     let this_user = await User.findOne({ username: req.currentUser.username });
     const updatedReqs = user.friend_requests.filter(
@@ -163,7 +166,11 @@ router.post("/:username/acceptreq", isUser, personalContent, async (req, res) =>
             { username: sender.username },
             { sent_requests: newSenderReq, friends: sender.friends }
         );
-        res.redirect("/profile/" + req.params.username);
+        if (req.query.type == "accept") {
+            res.redirect("/profile/" + req.params.username + `?msg=You are now friends with ${sender.fname}`);
+        } else {
+            res.redirect("back");
+        }
     } catch (err) {
         console.error(err);
         res.redirect("/profile/" + req.params.username + "?msg=Error with accepting request");

@@ -1,15 +1,41 @@
 * {
     font-family: "Roboto", sans-serif;
 }
-.navbar a {
-    color: black;
-}
 
-.comment {
-    display: none;
+/* each user in /allusers route */
+.allUsersContainer > div {
+    /* background-color: white; */
+    background-color: rgba(228, 177, 96, 0.6);
+    color: black;
+    backdrop-filter: blur(1px);
+    border-radius: 1rem;
+    padding: 0.8rem;
 }
-.commentObj {
+.allUsersContainer {
+    margin-top: 50px;
+}
+.username {
+    font-size: 0.7rem;
+}
+/*  */
+/* like modal 'add to friends button' */
+.modalBodyLeft {
     display: flex;
+    display: inline-block;
+    align-items: center;
+    gap: 0.5rem;
+}
+.imgContainer {
+    display: flex;
+    flex-direction: column;
+}
+.modalContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.inLike {
+    width: 70%;
 }
 .likeModal {
     display: none;
@@ -26,7 +52,6 @@
     display: flex;
     align-items: center;
 }
-
 .modalBody {
     border: 1px solid black;
     display: flex;
@@ -34,40 +59,13 @@
     width: 500px;
     padding: 0.5rem;
 }
-.inLike {
-    width: 70%;
+.modalBody button {
+    width: 100px;
 }
-
-.modalBodyLeft {
-    display: flex;
-    display: inline-block;
-    align-items: center;
-    gap: 0.5rem;
-}
-.imgContainer {
-    display: flex;
-    flex-direction: column;
-}
-
-.modalContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
 .modalBodyLeft img {
     height: 50px;
     width: max-content;
 }
-.username {
-    font-size: 0.7rem;
-}
-
-/* like modal 'add to friends button' */
-.modalBody button {
-    width: 100px;
-}
-
 .likeModalContent {
     background-color: #f4f4f4;
     margin: 20% auto;
@@ -86,21 +84,47 @@
     cursor: pointer;
     color: black;
 }
+/*  */
+/* login/signup routes */
+.login {
+    display: flex;
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(3px);
+    border-radius: 1rem;
+    padding: 0.7rem;
+    transform: translate(-50%, -50%);
+}
+.login-row {
+    display: flex;
+    gap: 1rem;
+    padding: 0.2rem;
+    justify-content: flex-end;
+}
 
+/*  */
+/* post related css */
+.img-container {
+    display: flex;
+    flex-direction: column;
+}
+.comment {
+    display: none;
+}
+.commentObj {
+    display: flex;
+}
 .comments-visible {
     display: initial;
 }
 .date {
     font-size: 0.5rem;
 }
-.img-container {
-    display: flex;
-    flex-direction: column;
-}
 .img-container a {
     font-size: 0.6rem;
 }
-
 .posts-container {
     display: flex;
     width: 50%;
@@ -108,12 +132,17 @@
     flex-direction: column;
     gap: 1rem;
 }
+.posts-container {
+    margin-top: 50px;
+}
 .post {
     padding: 0.4rem;
     background-color: white;
     border-radius: 10px;
+    -webkit-box-shadow: -0px 0px 22px 8px rgba(66, 68, 90, 1);
+    -moz-box-shadow: -0px 0px 22px 8px rgba(66, 68, 90, 1);
+    box-shadow: -0px 0px 22px 8px rgba(66, 68, 90, 1);
 }
-
 .post-user {
     display: flex;
     gap: 0.2rem;
@@ -134,18 +163,54 @@
 .post-bottom button {
     height: 1.2rem;
 }
-
 .post-body {
     padding-bottom: 1rem;
 }
-
 .comment-send {
     margin-top: 5px;
     display: flex;
 }
-.comment-send img {
+.smallImg {
     width: 20px;
     height: 20px;
     border-radius: 50%;
     margin-right: 5px;
 }
+/* new post route */
+.newPost {
+    margin-top: 50px;
+    overflow-y: hidden;
+    /* width: 250px; */
+}
+.newpostContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.expanded {
+    display: none;
+}
+.bigModal {
+    position: absolute;
+    top: 30%;
+    padding: 1rem;
+    border-radius: 1rem;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    background-color: white;
+}
+.newPost {
+    background-color: white;
+    display: block;
+}
+
+.visible {
+    display: block;
+}
+
+/* .typeArea {
+    display: flex;
+} */
+
+/*  */

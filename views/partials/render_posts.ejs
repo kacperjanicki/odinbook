@@ -1,4 +1,5 @@
 <div class="posts-container">
+    <span style="text-align:center;font-size:1.1rem"><%= msg ? msg : '' %> </span>
     <% posts.map(post=> {
         if( (post.privacy == "public") || (currentUser ? (post.privacy=="private" && post.author.equals(currentUser._id) || post.privacy=="friends" &&  currentUser.friends.filter((friend)=>friend.equals(post.author._id)).length>0 || post.author.equals(currentUser._id) ):false)){ %>
         <div class="post">
@@ -114,7 +115,7 @@
                             <img
                             src="data:<%=currentUser.contentType%>;base64,<%=currentUser.imageBase64%>"
                             alt=""
-                            style="height: 1rem"
+                            class="smallImg"
                         />
                         <% } %> 
                         

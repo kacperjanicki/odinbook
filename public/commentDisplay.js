@@ -20,3 +20,26 @@ btn.forEach((button) => {
         });
     });
 });
+
+const tx = document.getElementsByTagName("textarea");
+const modal = document.querySelector(".newpostModal");
+const expanded = document.querySelector(".expanded");
+
+console.log(tx[0]);
+for (let i = 0; i < tx.length; i++) {
+    tx[i].setAttribute("style", "height:" + tx[i].scrollHeight + "px;overflow-y:hidden;resize:none;");
+    tx[i].addEventListener("input", OnInput, false);
+}
+tx[0].addEventListener("click", () => {
+    openNewPostModal();
+});
+
+function openNewPostModal() {
+    expanded.classList.add("visible");
+    modal.classList.add("bigModal");
+}
+
+function OnInput() {
+    this.style.height = 0;
+    this.style.height = this.scrollHeight + "px";
+}

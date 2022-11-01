@@ -3,12 +3,13 @@
     background-repeat: no-repeat;
     background-size: cover;
     height: 100vh;
-    width: 100%;
+    width: 100vw;
     position: absolute;
     top: 0;
     left: 0;
     z-index: -1;
     filter: blur(3px);
+    transition: 0.4s linear;
     /* -webkit-transition: 0.2s ease-in-out; */
 }
 .no-transition {
@@ -17,13 +18,14 @@
 .light {
     background-image: url("../light.jpg");
     color: black;
-    transition: 0.2s linear;
-    /* transition: 0.2s linear; */
+    transition: 0.4s linear;
 }
 .dark {
     background-image: url("../black.jpg");
+    transition: 0.4s linear;
     color: white;
 }
+
 .darkPost {
     background-color: white;
     color: black;
@@ -34,9 +36,31 @@
 .lightPost {
     background-color: black;
 }
-.dark a {
+.navDark a {
     color: white;
 }
-.light a {
+.navLight a {
+    color: #e4b160;
+}
+.blackText {
     color: black;
+}
+.whiteText {
+    color: white;
+}
+.navbar {
+    background-color: rgba(0, 0, 0, 0.61);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    display: flex;
+    justify-content: space-evenly;
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
+    backdrop-filter: blur(5px);
+    z-index: 2;
+}
+.navbar a {
+    text-decoration: none;
 }

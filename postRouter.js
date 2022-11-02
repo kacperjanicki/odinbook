@@ -16,6 +16,7 @@ router.get("/", isUser, async (req, res) => {
     res.render("all_posts", {
         posts: posts,
         currentUser: req.currentUser,
+        singlePost: false,
         msg: req.params.msg,
     });
 });
@@ -55,6 +56,7 @@ router.get("/:id", isUser, async (req, res) => {
         .populate("comments");
     isPostLiked([post], req.currentUser);
     res.render("all_posts", {
+        singlePost: true,
         currentUser: req.currentUser,
         msg: req.query.msg,
         posts: [post],
@@ -136,7 +138,9 @@ router.post("/:id/comment", isUser, requireLogin, async (req, res) => {
             await comment.save();
             post.comments.push(comment);
             await Post.updateOne({ _id: post._id }, { comments: post.comments });
-            res.redirect(req.header("Referer") + "?msg=Comment added successfully");
+            res.redirect(
+                req.header("Referer") + `?msg=Comment added successfully&&post=${post._id.toHexString()}`
+            );
         } else {
             return res.redirect("/posts/" + req.params.id + "?msg=Can't send empty comment");
         }

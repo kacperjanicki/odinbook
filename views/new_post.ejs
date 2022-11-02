@@ -1,35 +1,51 @@
 <div class="newpostContainer">
-    <div class="newPost">
-        <form action="<%= post?(`/posts/${String(post._id)}/edit`):('/posts/new') %>" method="POST">
-            <div class="newpostModal">
-                <div class="typeArea">
-                    <img
-                        src="data:<%=currentUser.contentType%>;base64,<%=currentUser.imageBase64%>"
-                        alt="profile_img"
-                        class="smallImg"
-                    />
-                    <!-- prettier-ignore -->
-                    <textarea name="body" cols="30" style="resize: none; height: 20px" rows="20" placeholder="What's on your mind, <%= currentUser.fname %>?"><%= post.body %></textarea>
-                </div>
-                <div class="expanded">
-                    <p>Who can view this post</p>
-                    <div>
-                        <label for="public">Everyone</label>
-                        <input id = "1" onclick="onlyOneChecked(this.id)" type="checkbox" name="public" <%=
-                        post&&post.public?checked:'' %> class="check" />
-                    </div>
-                    <div>
-                        <label for="friends">Friends only</label>
-                        <input id="2" onclick="onlyOneChecked(this.id)" type="checkbox" name="friends" <%=
-                        post&&post.friendsOnly?checked:'' %> class="check"/>
-                    </div>
-                    <div>
-                        <label for="private">Only me</label>
-                        <input id="3" onclick="onlyOneChecked(this.id)" type="checkbox" name="private" <%=
-                        post&&!post.public?checked:'' %> class="check"/>
-                    </div>
-                </div>
+    <div>
+        <div class="newPost">
+            <div class="newpostModal initial post">
+                <img
+                    alt="profile_img"
+                    src="data:<%=currentUser.contentType%>;base64,<%=currentUser.imageBase64%>"
+                    alt="profile_img"
+                    class="smallImg"
+                />
+                <!-- prettier-ignore -->
+                <textarea name="body" cols="30" class="newPostType" style="resize: none" rows="20" placeholder="What's on your mind, <%= currentUser.fname %>?"><%= post.body %></textarea>
             </div>
-        </form>
+
+            <form action="<%= post?(`/posts/${String(post._id)}/edit`):('/posts/new') %>" method="POST">
+                <div class="newpostinside">
+                    <div class="bigPost">
+                        <div class="close">X</div>
+                        <div class="typeArea">
+                            <img
+                                src="data:<%=currentUser.contentType%>;base64,<%=currentUser.imageBase64%>"
+                                alt="profile_img"
+                                class="smallImg"
+                            />
+                            <!-- prettier-ignore -->
+                            <textarea name="body" cols="30" class="textarea" style="resize: none; height: 20px" rows="20" placeholder="What's on your mind, <%= currentUser.fname %>?"><%= post.body %></textarea>
+                        </div>
+                        <div>
+                            <p>Who can view this post</p>
+                            <div>
+                                <label for="public">Everyone</label>
+                                <input id = "1" onclick="onlyOneChecked(this.id)" type="checkbox"
+                                name="public" <%= post&&post.public?checked:'' %> class="check" />
+                            </div>
+                            <div>
+                                <label for="friends">Friends only</label>
+                                <input id="2" onclick="onlyOneChecked(this.id)" type="checkbox" name="friends"
+                                <%= post&&post.friendsOnly?checked:'' %> class="check"/>
+                            </div>
+                            <div>
+                                <label for="private">Only me</label>
+                                <input id="3" onclick="onlyOneChecked(this.id)" type="checkbox" name="private"
+                                <%= post&&!post.public?checked:'' %> class="check"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>

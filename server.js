@@ -44,6 +44,7 @@ app.get("/", checkuser, async (req, res) => {
     isPostLiked(posts, req.currentUser);
     isLikeFriend(posts, req.currentUser); //add to friends button function
     res.render("all_posts", {
+        singlePost: false,
         currentUser: req.currentUser ? req.currentUser : false,
         posts: posts,
         msg: req.query.pass ? "Logged in" : req.query.msg,

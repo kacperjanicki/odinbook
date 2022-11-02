@@ -1,1 +1,7 @@
-<%- include('./partials/render_posts.ejs') %>
+<!-- prettier-ignore -->
+<% if(!singlePost){ %>
+     <%- include("./new_post.ejs",{post:false}) %>
+    <%-include('./partials/render_posts.ejs',{single:false}) %>
+<% }else{ %>
+<%-include('./partials/render_posts.ejs',{single:true}) %>
+<% } %>

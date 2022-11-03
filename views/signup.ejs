@@ -1,33 +1,37 @@
-<form action="/signup" method="POST" enctype="multipart/form-data">
-    <% if(error || msg){ %> <%= error || msg %> <% } %>
-    <div>
-        <label for="username">First name: </label>
-        <input type="text" name="fname" required />
-    </div>
-    <div>
-        <label for="username">Last name: </label>
-        <input type="text" name="lname" required />
-    </div>
-    <div>
-        <label for="username">Username: </label>
-        <input type="text" name="username" required />
-    </div>
-    <div>
-        <label for="password">Password: </label>
-        <input type="password" name="password" required />
-    </div>
-    <div>
-        <label for="password">Confirm Password: </label>
-        <input type="password" name="confirm_password" required />
-    </div>
-    <div>
-        <label for="date">Date of birth: </label>
-        <input type="date" name="date" required value="2022-01-01" />
-    </div>
-    <div>
-        <label for="date">Profile picture: </label>
-        <input type="file" name="profilePic" />
-    </div>
-
-    <button type="submit">Sign up</button>
-</form>
+<div class="login">
+    <form action="/signup" method="POST" enctype="multipart/form-data">
+        <% if(error || msg){ %> <%= error || msg %> <% } %>
+        <div class="login-row">
+            <label for="username">First name: </label>
+            <input type="text" name="fname" required />
+        </div>
+        <div class="login-row">
+            <label for="username">Last name: </label>
+            <input type="text" name="lname" required />
+        </div>
+        <div class="login-row">
+            <label for="username">Username: </label>
+            <input type="text" name="username" required />
+        </div>
+        <div class="login-row">
+            <label for="password">Password: </label>
+            <input type="password" name="password" required />
+        </div class=login-row>
+        <div class="login-row">
+            <label for="password">Confirm Password: </label>
+            <input type="password" name="confirm_password" required />
+        </div>
+        <div class="login-row">
+            <label for="date">Date of birth: </label>
+            <input type="date" name="date" required value="2022-01-01" />
+        </div>
+        <div class="login-row file-input">
+            
+                <label for="profilePic">Profile picture:</label>
+                <input type="file" name="profilePic" class="inputFile"/>
+        </div>
+        <div class="buttonForm">
+            <button type="submit" class="buttonForm">Sign up</button>
+        </div>
+    </form>
+</div>

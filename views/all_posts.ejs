@@ -1,5 +1,5 @@
 <!-- prettier-ignore -->
-<% if(!singlePost){ %>
+<% if(!singlePost && currentUser){ %>
      <%- include("./new_post.ejs",{post:false}) %>
     <%-include('./partials/render_posts.ejs',{single:false}) %>
 <% }else{ %>

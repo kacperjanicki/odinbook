@@ -8,8 +8,7 @@
     top: 0;
     left: 0;
     z-index: -1;
-    filter: blur(3px);
-    transition: 0.4s linear;
+    /* transition: 0.4s linear; */
     /* -webkit-transition: 0.2s ease-in-out; */
 }
 .no-transition {
@@ -18,12 +17,15 @@
 .light {
     background-image: url("../light.jpg");
     color: black;
-    transition: 0.4s linear;
+    background-color: #e4b160;
 }
 .dark {
     background-image: url("../black.jpg");
-    transition: 0.4s linear;
     color: white;
+    background-color: black;
+}
+.transition {
+    transition: 0.4s linear;
 }
 
 .darkPost {

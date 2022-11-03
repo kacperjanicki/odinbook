@@ -62,6 +62,7 @@ const initial = document.querySelector(".initial");
 
 function openNewPostModal() {
     postContainer.style.display = "block";
+    D;
     modal.classList.remove("expanded");
 }
 

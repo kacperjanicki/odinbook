@@ -1,7 +1,10 @@
 <div class="newpostContainer">
     <div>
+        <div class="message">
+            <span><%= msg ? msg : '' %> </span>
+        </div>
         <div class="newPost">
-            <div class="newpostModal initial post">
+            <div class="newpostModal initial post greyBg">
                 <img
                     alt="profile_img"
                     src="data:<%=currentUser.contentType%>;base64,<%=currentUser.imageBase64%>"
@@ -15,22 +18,24 @@
             <form action="<%= post?(`/posts/${String(post._id)}/edit`):('/posts/new') %>" method="POST">
                 <div class="newpostinside">
                     <div class="bigPost">
-                        <div class="close">X</div>
-                        <div class="typeArea">
+                        <div class="close newPostClose">X</div>
+                        <div class="newpostModal initial post greyBg" style="border: none">
                             <img
+                                alt="profile_img"
                                 src="data:<%=currentUser.contentType%>;base64,<%=currentUser.imageBase64%>"
                                 alt="profile_img"
                                 class="smallImg"
                             />
                             <!-- prettier-ignore -->
-                            <textarea name="body" cols="30" class="textarea" style="resize: none; height: 20px" rows="20" placeholder="What's on your mind, <%= currentUser.fname %>?"><%= post.body %></textarea>
+                            <textarea name="body" cols="30" class="newPostType" style="resize: none" rows="20" placeholder="What's on your mind, <%= currentUser.fname %>?" id="modalType"><%= post.body %></textarea>
                         </div>
+
                         <div>
                             <p>Who can view this post</p>
                             <div>
                                 <label for="public">Everyone</label>
                                 <input id = "1" onclick="onlyOneChecked(this.id)" type="checkbox"
-                                name="public" <%= post&&post.public?checked:'' %> class="check" />
+                                name="public" <%= post&&post.public?checked:'' %> class="check" checked/>
                             </div>
                             <div>
                                 <label for="friends">Friends only</label>
@@ -43,6 +48,7 @@
                                 <%= post&&!post.public?checked:'' %> class="check"/>
                             </div>
                         </div>
+                        <button type="submit">Send</button>
                     </div>
                 </div>
             </form>

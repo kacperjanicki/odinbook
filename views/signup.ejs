@@ -1,6 +1,8 @@
-<div class="login">
-    <form action="/signup" method="POST" enctype="multipart/form-data">
-        <% if(error || msg){ %> <%= error || msg %> <% } %>
+<div class="login formTop">
+    <form  enctype="multipart/form-data" method="POST" action="/signup">
+        <span style="color: red">
+            <% if(error){ %> <%= error %> <% } %> 
+        </span>
         <div class="login-row">
             <label for="username">First name: </label>
             <input type="text" name="fname" required />

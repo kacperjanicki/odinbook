@@ -1,0 +1,73 @@
+.alert {
+    padding: 1rem;
+    width: 300px;
+    height: 100px;
+    border-radius: 0.5rem;
+}
+.alertContainer {
+    position: fixed;
+    z-index: 3;
+}
+.topRight {
+    top: 60;
+    right: 10;
+}
+.bottomLeft {
+    bottom: 10;
+    left: 10;
+}
+
+.redirectInvisible {
+    display: none;
+}
+.redirectVisible {
+    display: block;
+}
+.timer {
+    width: 0%;
+    height: 20px;
+    background: rgba(2, 42, 224, 0.3);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border-radius: 0.5rem;
+}
+
+.timerActive {
+    animation: runProgress 4s linear forwards 0.5s;
+}
+.alertActive {
+    animation: fadeOut 5s linear forwards;
+}
+@keyframes runProgress {
+    0% {
+        width: 100%;
+        background: rgba(2, 42, 224, 0.3);
+    }
+    100% {
+        width: 0%;
+        background: rgba(2, 42, 224, 1);
+    }
+}
+@keyframes fadeOut {
+    0% {
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+        transform: translateY(0px);
+    }
+    99% {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    100% {
+        opacity: 0;
+    }
+}
+.alertActive:hover {
+    animation-play-state: paused;
+}

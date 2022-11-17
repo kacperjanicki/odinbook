@@ -1,0 +1,57 @@
+.modal-bg {
+    display: none;
+    position: absolute;
+    z-index: 3;
+    top: 20%;
+}
+.modal-content {
+    padding: 1rem;
+    border: 1px solid #888;
+    width: 90%;
+    margin: -10%;
+}
+.modal-header {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+.modal-top {
+    width: 100%;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+.close {
+    color: #aaa;
+    font-size: 1.3rem;
+    font-weight: bold;
+    float: right;
+}
+.newPostClose {
+    position: relative;
+    top: 0;
+    right: 0;
+    margin-left: 1rem;
+}
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+.greyBg > .close:hover {
+    color: white;
+}
+.greyBg > .modal-top > .close:hover {
+    color: white;
+}
+.postDarkBg .closeComment {
+    color: #aaa;
+}
+.postDarkBg .closeComment:hover {
+    color: white;
+}
+
+.non-visible {
+    display: none;
+}

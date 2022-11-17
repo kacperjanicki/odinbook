@@ -1,10 +1,6 @@
-<% if(msg!="Logged in"){ %>
-<div><%= msg %></div>
-<% } %>
-<!--
-like is a variable that lets distinguish wheter
-this partial is used on user page or like modal 
--->
+<!-- like is a variable that lets distinguish wheter
+this partial is used on user page or like modal  -->
+
 <div class="addFriendButtonContainer">
     <% if(!currentUser){ %>
     <button disabled>Add to friends (login required)</button>
@@ -31,7 +27,7 @@ this partial is used on user page or like modal
     >
         <button>Add to friends</button>
     </form>
-    <% }else if(like ? !like.isPersonal && like.isFriend : (this_user ?
+    <% }else if(like ? (!like.isPersonal && like.isFriend) : (this_user ?
     this_user.isFriend&&!this_user.isPersonal : !isPersonal && isFriend)){ %>
     <form
         action="/profile/<%= currentUser.username %>/removeFriend?friend=<%= like ? like.username :(this_user ? this_user.username:user.username)%>"

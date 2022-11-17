@@ -10,16 +10,20 @@
 }
 
 /* each user in /allusers route */
-.allUsersContainer > div {
+.allUsersContainer > div > div {
     /* background-color: white; */
-    background-color: rgba(228, 177, 96, 0.6);
-    color: black;
+    /* color: black; */
     backdrop-filter: blur(1px);
     border-radius: 1rem;
     padding: 0.8rem;
 }
 .allUsersContainer {
-    margin-top: 50px;
+    width: 400px;
+    right: 50%;
+    top: 50%;
+    transform: translate(50%, -50%);
+    position: absolute;
+    height: 100vh;
 }
 .username {
     font-size: 0.7rem;
@@ -55,17 +59,22 @@
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.3);
 }
+.likecount {
+    font-size: 1.2rem;
+}
+
 .addFriendButtonContainer {
     display: flex;
     align-items: center;
 }
 .modalBody {
-    border: 1px solid black;
+    border: 1px solid #dee2e6;
     display: flex;
+    border-radius: 0.5rem;
     justify-content: space-between;
     width: 90%;
     /* top: 20%; */
-    padding: 0.5rem;
+    padding: 1rem;
 }
 .modalBody button {
     width: 100px;
@@ -75,29 +84,23 @@
     width: max-content;
 }
 .likeModalContent {
-    background-color: #f4f4f4;
     margin: 100px auto;
     text-align: center;
     width: 400px;
     overflow: hidden;
-    padding: 0.2rem;
+    border-radius: 0.5rem;
+    padding: 0.8rem;
     box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2);
 }
-.close {
-    float: right;
-    color: grey;
-}
-.close:hover,
-.close:focus {
-    cursor: pointer;
-    color: black;
+
+.title {
+    margin-bottom: 0.4rem;
 }
 /*  */
 /* login/signup routes */
 .login {
     display: flex;
     position: absolute;
-    top: 40%;
     right: 50%;
     /* backdrop-filter: blur(3px); */
     border-radius: 1rem;
@@ -105,12 +108,32 @@
     padding: 1rem;
     transform: translate(50%, -50%);
 }
-.greyBg {
-    background-color: #484848;
+.formTop {
+    top: 40%;
 }
+
+.greyBg {
+    background-color: #323233;
+}
+.postDarkBg {
+    background-color: #242526;
+}
+.postDarkBg a {
+    color: white;
+}
+
+.greyBg a {
+    color: white;
+}
+
 .whiteBg {
     background-color: white;
+    color: black;
 }
+.whiteBg a {
+    color: black;
+}
+
 .login-row {
     display: flex;
     justify-content: space-between;
@@ -131,36 +154,88 @@
     display: flex;
     flex-direction: column;
 }
+.icon {
+    filter: invert(86%) sepia(96%) saturate(17%) hue-rotate(237deg) brightness(107%) contrast(104%);
+    transform: scale(0.3);
+}
+.post-user-info-top {
+    vertical-align: middle;
+    display: flex;
+    gap: 0;
+}
+
+.post-user-info-top {
+    margin-top: 0;
+}
+
 .comment {
     display: none;
 }
+.commentObj {
+    display: flex;
+}
+.commentContainer {
+    display: flex !important;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.post-actions {
+    display: flex;
+    width: 100%;
+}
+
+.closeComment {
+    margin-left: auto;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
 .commentObj {
     display: flex;
     word-wrap: break-word;
     word-break: break-word;
 }
 .comments-visible {
-    display: initial;
+    display: unset;
 }
 .date {
-    font-size: 0.8rem;
+    font-size: 1rem;
+    display: flex;
+    gap: 0;
+    justify-content: center;
+    align-items: center;
 }
 .img-container a {
     font-size: 0.7rem;
 }
 .posts-container {
     display: flex;
-    width: 50%;
     margin: auto;
     flex-direction: column;
     gap: 1rem;
+    width: 60%;
+}
+.singlePost {
+    margin-top: 60px;
+}
+.manyPosts {
+    margin-top: 60px;
+}
+.newPost {
+    margin-top: 10px;
+}
+.newPostType {
+    padding: 0.5rem;
+    border-radius: 0.6rem;
 }
 
 .post {
-    padding: 0.4rem;
-    background-color: white;
-    border-radius: 10px;
-    border: 1px solid #dee2e6;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    font-size: 1.3rem;
 }
 .post-user {
     display: flex;
@@ -169,11 +244,12 @@
 .post-user-info {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    margin-left: 10px;
 }
 .post-user img {
-    width: auto;
-    height: 2.5rem;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
 }
 .post-bottom {
@@ -182,16 +258,25 @@
 .post-bottom button {
     height: 1.2rem;
 }
+
 .post-body {
     padding-bottom: 1rem;
+    margin-top: 5px;
+    margin-left: 10px;
 }
 .comment-send {
     margin-top: 5px;
     display: flex;
+    align-items: center;
 }
+.textArea {
+    height: 100px;
+    padding: 0.8rem;
+}
+
 .smallImg {
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     margin-right: 5px;
 }
@@ -205,10 +290,10 @@
 
 /* when you click new post textarea */
 .newpostModal {
-    background-color: white;
     height: 20%;
     padding: 1rem;
     border-radius: 1rem;
+    display: flex;
 }
 .newpostContainer {
     margin-top: 50px;
@@ -228,7 +313,6 @@
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1;
-    background-color: white;
 }
 
 .visible {
@@ -241,11 +325,12 @@
 
 .newpostinside {
     background-color: rgba(0, 0, 0, 0.3);
+    display: none;
     position: absolute;
     left: 0;
     top: 0;
     z-index: 2;
-    width: 100vw;
+    width: 100%;
     height: 100vh;
 }
 .initial {
@@ -257,4 +342,47 @@
 }
 .initial textarea {
     height: 3rem;
+}
+
+/* not found route styling */
+.notFound {
+    margin-top: 50px;
+}
+
+.message {
+    text-align: center;
+    font-size: 1.2rem;
+    padding: 0.5rem;
+}
+
+.delete {
+    display: flex;
+    gap: 0.5rem;
+    flex-direction: column;
+}
+.deleteBtns {
+    display: flex;
+    justify-content: space-around;
+}
+
+/* profile route */
+
+.profile {
+    position: relative;
+    width: 700px;
+    margin: auto;
+    margin-top: 60px;
+    padding: 1rem;
+    border-radius: 1rem;
+    height: fit-content;
+    /* border: 1px solid #a7a7a7; */
+}
+.profileTop {
+    margin-left: 25%;
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }

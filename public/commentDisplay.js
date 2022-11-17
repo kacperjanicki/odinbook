@@ -1,4 +1,6 @@
 const btn = document.querySelectorAll(".comment-display");
+let all_posts = document.querySelectorAll(".post");
+
 function getElementsById(elementID) {
     var elementCollection = new Array();
     var allElements = document.getElementsByTagName("*");
@@ -8,48 +10,63 @@ function getElementsById(elementID) {
     return elementCollection;
 }
 
-btn.forEach((button) => {
-    button.addEventListener("click", (e) => {
-        let id = e.target.id;
-        const elements = getElementsById(id);
-        elements[1].classList.add("comments-visible");
-        elements[3].classList.add("comments-visible");
-        elements[2].addEventListener("click", () => {
-            elements[1].classList.remove("comments-visible");
-            elements[3].classList.remove("comments-visible");
+all_posts.forEach((post) => {
+    let comment_display = post.querySelector(".comment-display");
+    if (comment_display) {
+        comment_display.addEventListener("click", () => {
+            post.querySelectorAll(".comment").forEach((e) => {
+                e.classList.add("comments-visible");
+            });
+            post.querySelector(".beforeCommentContainer").classList.add("commentContainer");
         });
-    });
+        let hide = post.querySelector(".closeComment");
+        hide.addEventListener("click", () => {
+            post.querySelectorAll(".comment").forEach((e) => {
+                e.classList.remove("comments-visible");
+            });
+            post.querySelector(".beforeCommentContainer").classList.remove("commentContainer");
+        });
+    }
 });
 
 const tx = document.querySelectorAll(".textarea");
+tx.forEach((area) => {
+    area.addEventListener("keypress", (e) => {
+        if (13 == e.keyCode) {
+            area.parentElement.parentElement.submit();
+        }
+    });
+});
+
 const newPostText = document.querySelector(".newPostType");
 const postContainer = document.querySelector(".newpostinside");
-const modal = document.querySelector(".newpostModal");
-const close = document.querySelector(".close");
 const expanded = document.querySelector(".expanded");
-postContainer.style.display = "none";
+if (postContainer) {
+    postContainer.style.display = "none";
+}
 
-console.log(tx[0]);
 for (let i = 0; i < tx.length; i++) {
     tx[i].scrollHeight = 20;
-    tx[i].setAttribute("style", "height:" + 20 + "px;overflow-y:hidden;resize:none;");
+    tx[i].setAttribute("style", "height:" + 35 + "px;overflow-y:hidden;resize:none;");
     tx[i].addEventListener("input", OnInput, false);
 }
-newPostText.addEventListener("click", () => {
-    openNewPostModal();
-});
-
-close.addEventListener("click", () => {
-    console.log("test");
-    postContainer.style.display = "none";
-    // modal.style.display = "none";
-});
+if (newPostText) {
+    newPostText.addEventListener("click", () => {
+        openNewPostModal();
+    });
+}
+if (document.querySelector(".close")) {
+    document.querySelector(".close").addEventListener("click", () => {
+        console.log("test");
+        postContainer.style.display = "none";
+        // modal.style.display = "none";
+    });
+}
 
 window.document.addEventListener("click", (e) => {
     if (e.target == postContainer) {
         postContainer.style.display = "none";
     }
-    console.log(postContainer);
 });
 
 if (window.location.search.includes("?msg=Comment%20added%20successfully")) {
@@ -62,7 +79,7 @@ const initial = document.querySelector(".initial");
 
 function openNewPostModal() {
     postContainer.style.display = "block";
-    D;
+    document.getElementById("modalType").focus();
     modal.classList.remove("expanded");
 }
 

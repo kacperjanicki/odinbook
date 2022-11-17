@@ -1,7 +1,27 @@
-<!-- prettier-ignore -->
-<div class="modalContainer allUsersContainer">
+<%- include("./partials/alert.ejs",{alert:alert}) %>
+<div class="modalContainer allUsersContainer singlePost">
     <% users.map(user=>{ %>
-
+    <div class="singleUser">
+        <div id="new-modal" class="modal-bg">
+            <% if(currentUser){ %>
+            <div class="modal-content">
+                <div class="modal-top">
+                    <span class="modal-header">Mutual friends with <%= user.fname %> <%= user.lname %></span>
+                    <button class="close">X</button>
+                </div>
+                <!-- prettier-ignore -->
+                <div class="modal-container">
+                    <% if(user.mutual.length>0){ %>
+                        <% user.mutual.map(mutual=>{ %> 
+                            <div class="user-display">
+                               <%= mutual.username %>
+                            </div>
+                           <% }) %>       
+                    <% } %> 
+                </div>
+            </div>
+            <% } %>
+        </div>
         <div class="modalBody">
             <div class="modalBodyLeft">
                 <div class="imgContainer">
@@ -9,11 +29,16 @@
                     <a href="/profile/<%= user.username %>" class="username"><%= user.username %> </a>
                 </div>
                 <div><%= user.fname %> <%= user.lname %></div>
-                ? mutual friends
+                <!-- prettier-ignore -->
+                <!-- mutual friends modal -->
+                <% if(currentUser){ %>
+                <button id="modal-btn" class="modal-btn"><%= user.mutual.length %> mutual friends</button>
+                <% } %>
             </div>
-        
+
             <%- include("./partials/add_friend",{this_user:user}) %>
         </div>
-        
-        <% }) %>
+    </div>
+
+    <% }) %>
 </div>

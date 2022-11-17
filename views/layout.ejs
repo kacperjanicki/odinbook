@@ -8,13 +8,21 @@
         />
         <link rel="stylesheet" href="/css/main.css" />
         <link rel="stylesheet" href="/css/media.css" />
+        <link rel="stylesheet" href="/css/structure.css" />
         <link rel="stylesheet" href="/css/darkMode.css" />
+        <link rel="stylesheet" href="/css/modal.css" />
+        <link rel="stylesheet" href="/css/alert.css" />
     </head>
     <body>
         <!-- <script src="../facebookLogin.js"></script> -->
         <div class="bg-img light"></div>
-        <%- include('./partials/navbar.ejs') %> <%- body %>
+        <%- include('./partials/navbar.ejs') %>
+        <div class="blur"></div>
+
+        <div class="container"><%- body %></div>
+        <script src="/landingInfo.js"></script>
         <script src="/toggleMode.js"></script>
+        <script src="/redirect.js" defer></script>
         <script src="/commentDisplay.js"></script>
         <script src="/likeModal.js"></script>
         <script src="/checkbox.js"></script>

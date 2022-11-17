@@ -20,4 +20,4 @@ likeSchema.pre("find", function (next) {
     next();
 });
 
-module.exports = mongoose.model("Like", commentSchema);
+module.exports = mongoose.model("Like", likeSchema);

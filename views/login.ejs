@@ -1,8 +1,9 @@
-<div class="login">
+<div class="login formTop">
     <form action="/login" method="POST">
-        <span style="color: red">
-            <% if(error){ %> <%= error %> <% } %> <% if(msg){ %> <%= msg %> <% } %>
-        </span>
+        <!-- prettier-ignore -->
+        <% if(error){ %> <span style="color: red"><%= error %> </span><% } %> <% if(msg){ %>
+        <span style="color: green"><%= msg %> </span><% } %>
+
         <div class="login-row loginPage">
             <label for="username">Username: </label>
             <input type="text" name="username" required />

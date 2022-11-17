@@ -7,7 +7,8 @@ module.exports = async (req, res, next) => {
         let user = await JWT.verify(token, process.env.TOKEN);
         req.currentUser = await User.findOne({ username: user.username })
             .populate("friend_requests")
-            .populate("sent_requests");
+            .populate("sent_requests")
+            .populate("friends");
         next();
     } catch (e) {
         req.currentUser = false;

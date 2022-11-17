@@ -10,6 +10,7 @@ router.get("/", isUser, async (req, res) => {
         user.awaitingReq = false;
         user.isFriend = false;
         user.sentReq = false;
+        user.mutual = 0;
         if (req.currentUser) {
             if (user.username == req.currentUser.username) {
                 user.isPersonal = true;
@@ -25,6 +26,16 @@ router.get("/", isUser, async (req, res) => {
                     person.equals(req.currentUser._id)
                 )[0].username;
             }
+            // prettier-ignore
+            user.mutual = []
+            user.friends.forEach((friend) => {
+                let myfriends = req.currentUser.friends;
+                if (myfriends.filter((my_friend) => my_friend.equals(friend)).length > 0) {
+                    console.log(user.username, friend.username);
+                    user.mutual.push(friend);
+                }
+            });
+            user.mutual = user.mutual;
         }
     });
 
@@ -32,6 +43,7 @@ router.get("/", isUser, async (req, res) => {
         currentUser: req.currentUser,
         users: users,
         msg: null,
+        alert: req.query.alert,
         like: false,
     });
 });

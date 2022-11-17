@@ -1,38 +1,42 @@
-<div class="posts-container">
-    <span style="text-align:center;font-size:1.1rem"><%= msg ? msg : '' %> </span>
+<div class="posts-container <%= single ? 'singlePost' : "manyPosts" %> <%= newpost ? "newpost":"" %>">
     <% posts.map(post=> {
         if( (post.privacy == "public") || (currentUser ? (post.privacy=="private" && post.author.equals(currentUser._id) || post.privacy=="friends" &&  currentUser.friends.filter((friend)=>friend.equals(post.author._id)).length>0 || post.author.equals(currentUser._id) ):false)){ %>
-        <div class="post" <%= single ? "style=margin-top:50px;":"" %>>
+        <div class="post" >
             <div class="post-main">
                 <div class="post-user">
-                    <div class="img-container">
+                    <div class="left">
                         <a href="/profile/<%= post.author.username%>">
                             <img
                                 src="data:<%=post.author.contentType%>;base64,<%=post.author.imageBase64%>"
-                                alt=""
-                          
                             />
                         </a>
-                        <a href="/profile/<%= post.author.username %>"><%= post.author.username%></a>
-                           
+                    </div>
+                    <div class="right">
+                        <div class="post-user-info">
+                            <div class="post-user-info-top">
+                                <span><%= post.author.fname %> <%= post.author.lname%></span>                                    
+                            </div>
+                            <div class="date">
+                                <a href="/posts/<%=String(post._id) %>" class="date" >
+                            <%= post.createdAt.toISOString().split('T')[0] %> <%=
+                            post.createdAt.toLocaleString().split(',')[1].slice(0,6) %>
+                            </a>
+                            <% if(post.privacy == "public"){%> 
+                                        <a href="/posts/<%=String(post._id) %>" title="Public">
+                                            <img src="/icons/earth-svgrepo-com.svg" class="icon" alt="Public">                                            
+                                        </a>                                                                          
+                                    <% } %>
+
+                            </div>
+                        </div>
+                        <div class="post-body"><%= post.body %></div>
                         
                     </div>
 
-                    <div class="post-user-info">
-                        <%= post.author.fname %> <%= post.author.lname%>
-                        <a href="/posts/<%=String(post._id) %>" class="date">
-                            <%= post.createdAt.toISOString().split('T')[0] %> <%=
-                            post.createdAt.toLocaleString().split(',')[1].slice(0,6) %>
-                            <%= post.privacy %> 
-                        </a>
-                    </div>
                 </div>
-
-                <div class="post-body"><%= post.body %></div>
             </div>
-            <div class="modaldiv">
-                <% if(post.likes.length==0){ %>
-                    <span>
+            <% if(post.likes.length==0){ %>
+                    <span class="likecount">
                         No one liked this post yet
                     </span> 
                 
@@ -42,16 +46,20 @@
                     </span>
                 
                 <%}else{ %>
-                    <span class="likecount">
+                    <button class="modal-btn">
                         <%= post.likes.length %> likes
-                    </span>
+                    </button>
                     
                 <% } %> 
-                <div class="likeModal">
-                    <div class="likeModalContent">
-                        <div class="close">X</div>
-                        Likes
-                        <div class="modalContainer">
+            <div class="modal-bg">
+                
+           
+                    <div class="modal-content">
+                        <div class="modal-top">
+                            <span class="modal-header">Likes</span>
+                            <div class="close">X</div>                            
+                        </div>
+                        <div class="modal-container">
                             <% post.likes.map((like)=>{ %>
                                 <div class="modalBody inLike">
                                     <div class="modalBodyLeft">
@@ -70,7 +78,7 @@
                         </div>
                         
                     </div>
-                </div>
+            
             </div>
             <div>
                 <div class="post-bottom">
@@ -87,7 +95,8 @@
                         <button disabled>Like</button>
                         <% } %>
                     </div>
-                    <% if(currentUser && post.author == currentUser.username){ %>
+                    <div class="post-actions">
+                        <% if(currentUser && post.author == currentUser.username){ %>
                     <form method="POST" action="/posts/<%=String(post._id) %>?_method=DELETE">
                         <button type="submit">Delete post</button>
                     </form>
@@ -101,15 +110,15 @@
                     </form>
                     <% } %><a href="/posts/<%=String(post._id) %>/edit">Edit</a> <% } %>
                     <button id="<%= post._id %>" class="comment-display">Comment</button>
+                    <button id="<%= post._id %>" type="button" class="comment closeComment">X</button>                        
+                    </div>
                 </div>
-
                 <form
                     action="/posts/<%=String(post._id) %>/comment"
                     method="POST"
                     class="comment"
                     id="<%= String(post._id) %>"
                 >
-                    <button id="<%= post._id %>" type="button">X hide</button>
                     <div class="comment-send">
                         <% if(currentUser){ %>
                             <img
@@ -120,16 +129,15 @@
                         <% } %> 
                         
                         <textarea name="body" cols="30" style="resize: none; height: 20px" rows="20" minlength="1" placeholder="Write a comment..." class="textarea"></textarea>
-                        <button <%= currentUser?'':("disabled") %> >Send</button>
                     </div>
                 </form>
 
-                <div id="<%= post._id %>" class="comment">
+                <div id="<%= post._id %>" class="comment beforeCommentContainer">
                     Comments <% if(post.comments){post.comments.map(comment=>{ %>
                     <div class="commentObj">
-                        <%= comment.createdAt.toLocaleString() %> 
-                        <img style="height:1rem"src="data:<%=comment.author.contentType%>;base64,<%=comment.author.imageBase64%>">
+                        <img class="smallImg" src="data:<%=comment.author.contentType%>;base64,<%=comment.author.imageBase64%>">
                         <%= comment.body %>
+                        <%= comment.createdAt.toLocaleString() %> 
 
                     </div>
                     
@@ -137,5 +145,6 @@
                 </div>
             </div>
         </div>
+           
     <% }}) %>
 </div>

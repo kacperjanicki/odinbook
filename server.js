@@ -6,8 +6,8 @@ const app = express();
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/views"); //create folder views
 const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({ limit: "10mb", extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
 var fs = require("fs");
 app.use(express.static("public")); //create folder public
 const expressLayouts = require("express-ejs-layouts");
@@ -43,62 +43,83 @@ app.get("/", checkuser, async (req, res) => {
     var posts = await Post.find({}).populate("author").populate("comments");
     isPostLiked(posts, req.currentUser);
     isLikeFriend(posts, req.currentUser); //add to friends button function
-    res.render("all_posts", {
+    res.render("main", {
         singlePost: false,
         currentUser: req.currentUser ? req.currentUser : false,
         posts: posts,
         msg: req.query.pass ? "Logged in" : req.query.msg,
+        alert: req.query.alert,
     });
 });
 app.get("/signup", checkuser, async (req, res) => {
+    console.log(req.currentUser);
     res.render("signup", {
         error: false,
+        alert: req.query.alert,
         msg: req.query.msg ? req.query.msg : null,
         currentUser: req.currentUser ? req.currentUser : false,
     });
 });
 
-store = require("./multer");
-app.post("/signup", checkuser, store.single("profilePic"), async (req, res) => {
+multer = require("multer");
+app.post("/signup", checkuser, async (req, res) => {
+    console.log(req.body);
     let passMatch = req.body.password == req.body.confirm_password;
     try {
         var usr = await User.findOne({ username: req.body.username });
         if (usr) {
             return res.status(401).render("signup", {
                 error: "User already exists",
-                user: req.user ? await User.findOne({ username: req.user.username }) : null,
+                currentUser: req.currentUser,
             });
         } else if (!passMatch) {
             return res.status(401).render("signup", {
                 error: "Passwords do not match",
-                user: req.user ? await User.findOne({ username: req.user.username }) : null,
+                currentUser: req.currentUser,
             });
         } else {
-            let hashed_pass = await bcrypt.hash(req.body.password, 10);
+            let hashed_pass = await bcrypt.hash(req.body.password, 10, (err) => {
+                console.log(err);
+            });
             let fnameCapitalized = req.body.fname.charAt(0).toUpperCase() + req.body.fname.slice(1);
             let lnameCapitalized = req.body.lname.charAt(0).toUpperCase() + req.body.lname.slice(1);
-            const user = new User({
+            let user = new User({
                 fname: fnameCapitalized,
                 lname: lnameCapitalized,
                 username: req.body.username,
                 password: hashed_pass,
                 dateOfBirth: new Date(req.body.date),
-                //profile image
-                filename: req.file ? req.file.originalname : "Facebook-default-no-profile-pic.jpg",
+                //here when you dont provide a profile picture when creating an account a deafult one will be assigned
+                filename: req.file ? req.file.originalname : "men.jpg",
                 contentType: req.file ? req.file.mimetype : "image/jpeg",
                 imageBase64: req.file
                     ? fs.readFileSync(req.file.path).toString("base64")
-                    : fs.readFileSync("./public/Facebook-default-no-profile-pic.jpg").toString("base64"),
+                    : fs.readFileSync("./public/images/men.jpg").toString("base64"),
             });
-            try {
-                await user.save();
-                res.redirect(
-                    "/login?username=" + req.body.username + "&msg=Account created, now you can log in"
-                );
-            } catch (err) {
-                res.status(400).redirect("/signup?msg=Error while creating an account");
-                console.error(err);
-            }
+            var storage = multer.diskStorage({
+                destination: function (request, file, callback) {
+                    callback(null, "./uploads");
+                },
+                filename: function (request, file, callback) {
+                    var temp_file_arr = file.originalname.split(".");
+                    var temp_file_name = temp_file_arr[0];
+                    var temp_file_extension = temp_file_arr[1];
+                    callback(null, temp_file_name + "-" + Date.now() + "." + temp_file_extension);
+                },
+            });
+            var upload = multer({ storage: storage }).single("profilePic");
+            upload(req, res, async (err) => {
+                try {
+                    await user.save();
+                } catch (err) {
+                    console.error(err);
+                }
+                if (err) {
+                    res.status(400).redirect("/signup?msg=Error while creating an account");
+                } else {
+                    return res.status(201).redirect(`/signup?msg=Account created, now you can log in`);
+                }
+            });
         }
     } catch (err) {
         console.error(err);
@@ -111,6 +132,8 @@ app.get("/login", checkuser, async (req, res) => {
     } else {
         res.render("login", {
             error: false,
+            alert: req.query.alert,
+
             currentUser: req.currentUser ? req.currentUser : false,
             msg: req.query.msg ? req.query.msg : null,
         });
@@ -138,10 +161,10 @@ app.get("/logout", checkuser, (req, res) => {
     res.redirect("/");
 });
 
-app.get("*", checkuser, async (req, res) => {
+app.get("*", checkuser, (req, res) => {
     res.status(404).render("errors/404", {
-        isUser: req.user ? true : false,
-        currentUser: req.user ? await User.findOne({ username: req.user.username }) : null,
+        isUser: req.currentUser ? true : false,
+        currentUser: req.currentUser,
     });
 });
 

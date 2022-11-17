@@ -13,7 +13,7 @@ function isLikeFriend(posts, user) {
                 if (like.username == user.username) {
                     like.isPersonal = true;
                 }
-                if (user.friends.includes(like._id)) {
+                if (user.friends.filter((friend) => friend.equals(like)).length > 0) {
                     like.isFriend = true;
                 }
                 like.sentReq = user.sent_requests.filter((request) => request.equals(like._id)).length > 0;

@@ -1,12 +1,29 @@
-<div><%= user.fname %> <%= user.lname %></div>
-<div>
-    <% if(user.imageBase64){ %>
-    <img src="data:<%=user.contentType%>;base64,<%=user.imageBase64%>" alt="" style="height: 3rem" />
-    <% }else{ %>
-    <img src="../public/Facebook-default-no-profile-pic.jpg" alt="test" />
-    <% } %>
-</div>
-<div>Born <%= user.dateOfBirth.toLocaleString().split(',')[0] %></div>
+<!-- prettier-ignore -->
 
-<%- include('./partials/add_friend.ejs') %> <% if(isPersonal){ %> <%- include('./partials/requests.ejs') %> <%
-} %>
+<%- include("./partials/alert.ejs",{alert:alert}) %>
+
+<div class="profile">
+    <div class="profileTop">
+        <div>
+            <div class="profile-info">
+                <div class="post-user">
+                    <% if(user.imageBase64){ %>
+                    <img src="data:<%=user.contentType%>;base64,<%=user.imageBase64%>" alt="" />
+                    <% }else{ %>
+                    <img src="../public/Facebook-default-no-profile-pic.jpg" alt="test" />
+                    <% } %>
+                </div>
+                <div><%= user.fname %> <%= user.lname %></div>
+            </div>
+        </div>
+        <div>Born <%= user.dateOfBirth.toLocaleString().split(',')[0] %></div>
+
+        <%- include('./partials/add_friend.ejs') %> <% if(isPersonal){ %>
+        <a href="/profile/<%= user.username %>/edit">Edit profile</a>
+        <%- include('./partials/requests.ejs')%> <% } %>
+
+        <p>Friends:</p>
+        <% user.friends.forEach(friend=>{ %> <%= friend.username %> <% }) %>
+    </div>
+    <%- include("./partials/render_posts.ejs",{single:false,newpost:false,posts:posts,profile:true}) %>
+</div>

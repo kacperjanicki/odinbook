@@ -1,0 +1,16 @@
+<% if(currentUser){ %>
+<div class="miniProfile">
+    <div class="post-user">
+        <img src="data:<%=currentUser.contentType%>;base64,<%=currentUser.imageBase64%>" />
+    </div>
+    <span> <%= currentUser.fname %> <%= currentUser.lname %> </span>
+</div>
+<a href="/profile/<%= currentUser.username %>/edit">Edit profile</a>
+<% }else{ %>
+<div class="miniProfile">
+    <div class="post-user">
+        <img src="/images/men.jpg" />
+    </div>
+    <span>Ghost User</span>
+</div>
+<a href="/signup">Create an account</a> or <a href="/login">Log in</a><% } %>

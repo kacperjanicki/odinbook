@@ -1,0 +1,22 @@
+.container {
+    display: flex;
+}
+
+.middle {
+    width: 100%;
+}
+
+.leftSidebar {
+    height: 50vh;
+    width: 250px;
+    margin-left: 10;
+    margin-top: 60px;
+    padding: 1rem;
+    z-index: 1;
+    border-radius: 0.5rem;
+}
+.miniProfile {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}

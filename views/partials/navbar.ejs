@@ -3,7 +3,6 @@
     <a href="/users">All Users</a>
     <a href="/posts">Posts</a>
     <% if(currentUser){ %>
-    <a href="/posts/new">New Post</a>
     <a href="/logout">Log out</a>
     <a href="/profile/<%=currentUser.username %>">Profile</a>
     <% }else{ %>

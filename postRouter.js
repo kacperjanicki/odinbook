@@ -16,20 +16,18 @@ router.get("/", isUser, async (req, res) => {
     res.render("all_posts", {
         posts: posts,
         currentUser: req.currentUser,
+        alert: req.query.alert,
         singlePost: false,
         msg: req.params.msg,
     });
 });
 
-router.get("/new", isUser, requireLogin, async (req, res) => {
-    res.render("new_post", {
-        post: false,
-        currentUser: req.currentUser,
-    });
+router.get("/new", isUser, requireLogin, (req, res) => {
+    res.redirect("/");
 });
 router.post("/new", isUser, async (req, res) => {
     const author = await User.findOne({ username: req.currentUser.username });
-    if (req.currentUser) {
+    if (req.currentUser && req.body.body.length >= 1) {
         var post = new Post({
             body: req.body.body,
             author: author._id,
@@ -46,6 +44,8 @@ router.post("/new", isUser, async (req, res) => {
         } catch (err) {
             console.error(err);
         }
+    } else if (req.body.body.length < 1) {
+        res.redirect("/?msg=You can't send empty post");
     } else {
         res.json(400, { msg: "Access denied" });
     }
@@ -55,10 +55,12 @@ router.get("/:id", isUser, async (req, res) => {
         .populate("author")
         .populate("comments");
     isPostLiked([post], req.currentUser);
+    console.log(req.query.alert);
     res.render("all_posts", {
         singlePost: true,
+        alert: req.query.alert,
         currentUser: req.currentUser,
-        msg: req.query.msg,
+        msg: req.query.alert,
         posts: [post],
     });
 });
@@ -112,7 +114,12 @@ router.post("/:id/like", isUser, async (req, res) => {
         let post = await Post.findById(req.params.id);
         post.likes.push(req.currentUser._id);
         await Post.updateOne({ _id: post._id }, { likes: post.likes });
-        res.redirect("back");
+
+        let backUrl = req.header("Referer");
+        if (backUrl.split("?").length > 1) {
+            backUrl = backUrl.split("?")[0];
+        }
+        res.redirect(backUrl + "?alert=Post liked");
     } else {
         res.json(400, { msg: "access denied" });
     }
@@ -121,7 +128,11 @@ router.post("/:id/dislike", isUser, async (req, res) => {
     let post = await Post.findById(req.params.id);
     let newLikes = post.likes.filter((like) => like._id.toHexString() != req.currentUser._id.toHexString());
     await Post.updateOne({ _id: post._id }, { likes: newLikes });
-    res.redirect("back");
+    let backUrl = req.header("Referer");
+    if (backUrl.split("?").length > 1) {
+        backUrl = backUrl.split("?")[0];
+    }
+    res.redirect(backUrl + "?alert=Post disliked");
 });
 
 const Comment = require("./models/comment");

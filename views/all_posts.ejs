@@ -1,7 +1,11 @@
 <!-- prettier-ignore -->
-<% if(!singlePost && currentUser){ %>
-     <%- include("./new_post.ejs",{post:false}) %>
-    <%-include('./partials/render_posts.ejs',{single:false}) %>
-<% }else{ %>
-<%-include('./partials/render_posts.ejs',{single:true}) %>
-<% } %>
+<%- include("partials/leftSidebar.ejs",{user:currentUser}) %>
+<%- include("partials/alert.ejs",{alert:alert}) %>
+
+<div class="middle">
+    <% if(!currentUser && !singlePost){%>
+    <%-include('./partials/render_posts.ejs',{single:false,newpost:false,profile:false}) %> <% }else
+    if(singlePost){ %> <%-include('./partials/render_posts.ejs',{single:true,newpost:false,profile:false}) %>
+    <% }else if(currentUser && !singlePost){ %> <%- include("./new_post.ejs",{post:false}) %>
+    <%-include('./partials/render_posts.ejs',{single:false,newpost:true,profile:false}) %> <% } %>
+</div>

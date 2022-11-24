@@ -6,7 +6,9 @@ const app = express();
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/views"); //create folder views
 const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 var fs = require("fs");
 app.use(express.static("public")); //create folder public
@@ -63,7 +65,7 @@ app.get("/signup", checkuser, async (req, res) => {
 
 multer = require("multer");
 app.post("/signup", checkuser, async (req, res) => {
-    console.log(req.body);
+    console.log(req);
     let passMatch = req.body.password == req.body.confirm_password;
     try {
         var usr = await User.findOne({ username: req.body.username });
@@ -131,7 +133,7 @@ app.get("/login", checkuser, async (req, res) => {
         res.redirect("/");
     } else {
         res.render("login", {
-            error: false,
+            error: req.query.error,
             alert: req.query.alert,
 
             currentUser: req.currentUser ? req.currentUser : false,
@@ -140,6 +142,7 @@ app.get("/login", checkuser, async (req, res) => {
     }
 });
 app.post("/login", async (req, res) => {
+    console.log(req.body);
     try {
         var user = await User.findOne({ username: req.body.username });
         let isValid = await bcrypt.compare(req.body.password, user.password);
@@ -150,10 +153,11 @@ app.post("/login", async (req, res) => {
             res.cookie("token", token);
             res.status(200).redirect("/?pass=true");
         } else {
-            return res.status(401).redirect("/login?msg=Invalid credentials");
+            return res.status(401).redirect("/login?error=Invalid credentials");
         }
-    } catch {
-        return res.status(401).redirect("/login?msg=Invalid credentials");
+    } catch (err) {
+        console.error(err);
+        return res.status(401).redirect("/login?error=Invalid credentials");
     }
 });
 app.get("/logout", checkuser, (req, res) => {
